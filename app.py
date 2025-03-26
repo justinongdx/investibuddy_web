@@ -146,28 +146,33 @@ def portfolio_detail(portfolio_id):
 
     symbols = portfolio_manager.get_portfolio_symbols(portfolio_id)
 
+    total_market_value = 0
+    total_cost_all = 0
+
     for s in symbols:
         total_shares = 0
         total_cost = 0
         transactions = s.transactions if hasattr(s, 'transactions') and s.transactions else []
 
         for txn in transactions:
-            if txn.transaction_type == 'Buy':
-                total_shares += txn.shares
-                total_cost += txn.shares * txn.price
-            elif txn.transaction_type == 'Sell':
-                total_shares -= txn.shares
+            try:
+                shares = float(txn.shares)
+                price = float(txn.price)
+                if txn.transaction_type == 'Buy':
+                    total_shares += shares
+                    total_cost += shares * price
+                elif txn.transaction_type == 'Sell':
+                    total_shares -= shares
+            except ValueError:
+                flash(f"❌ Invalid transaction: shares='{txn.shares}', price='{txn.price}' for symbol {s.ticker}")
+                continue
 
         last_price = s.current_data.get('last_price', 0) if s.current_data else 0
         s.current_shares = total_shares
         s.current_value = round(total_shares * last_price, 2) if total_shares > 0 else 0
 
-        total_market_value = 0
-    total_cost_all = 0
-
-    for s in symbols:
         total_market_value += s.current_value
-        total_cost_all += s.current_shares * (s.current_data.get('last_price', 0) if s.current_data else 0)
+        total_cost_all += total_cost
 
     portfolio_summary = {
         'market_value': round(total_market_value, 2),
@@ -193,10 +198,11 @@ def add_transaction(portfolio_id, symbol_id):
         txn_type = request.form['transaction_type']
         txn_date = request.form['transaction_date']
         shares = float(request.form['shares'])
-        price = float(request.form['price'])
+        price_str = request.form['price'].strip()
+        price = float(price_str) if price_str else symbol.current_data['last_price']
         cost = float(request.form['transaction_cost'])
 
-        portfolio_manager.add_transaction(symbol_id, txn_type, txn_date, shares, price, cost)
+        portfolio_manager.add_transaction(symbol_id, txn_type, shares, price, cost, txn_date)
         flash(f"{txn_type} transaction for {shares} shares of {symbol.ticker} added!")
         return redirect(url_for('portfolio_detail', portfolio_id=portfolio_id))
 

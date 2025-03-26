@@ -58,10 +58,10 @@
                                 <td>${{ txn.transaction_cost }}</td>
                             </tr>
                             {% if txn.transaction_type == 'Buy' %}
-                                {% set total_cost = total_cost + (txn.shares * txn.price + txn.transaction_cost) %}
-                                {% set total_buy = total_buy + txn.shares %}
+                                {% set total_cost = total_cost + ((txn.shares | float) * (txn.price | float) + (txn.transaction_cost | float)) %}
+                               {% set total_buy = total_buy + (txn.shares | float) %}
                             {% elif txn.transaction_type == 'Sell' %}
-                                {% set total_sell = total_sell + txn.shares %}
+                                {% set total_sell = total_sell + (txn.shares | float) %}
                             {% endif %}
                             {% endfor %}
                         </tbody>

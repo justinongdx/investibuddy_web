@@ -3,6 +3,8 @@ import datetime
 from models.database_manager import DatabaseManager
 from models.yfinance_source import YFinanceDataSource
 from models.entities import Portfolio, Symbol, Transaction
+from models.entities import Symbol
+
 
 class PortfolioManager:
     def __init__(self, db_manager: DatabaseManager):
@@ -60,3 +62,18 @@ class PortfolioManager:
             (symbol_id,)
         )
         return [Transaction(*row) for row in rows]
+
+    def get_symbol_by_id(self, symbol_id: int) -> Optional[Symbol]:
+        row = self.db_manager.execute_query(
+            "SELECT symbol_id, portfolio_id, ticker, sector FROM symbols WHERE symbol_id = ?",
+            (symbol_id,)
+        )
+
+        if row:
+            symbol = Symbol(*row[0])
+            symbol.transactions = self.get_symbol_transactions(symbol.symbol_id)
+            symbol.current_data = self.yf.fetch_data(symbol.ticker)
+            return symbol
+        return None
+
+

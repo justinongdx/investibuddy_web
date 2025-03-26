@@ -1,3 +1,4 @@
+
 class Portfolio:
     def __init__(self, portfolio_id: int, user_id: int, name: str):
         self.portfolio_id = portfolio_id
