@@ -1,0 +1,95 @@
+{% extends 'layout.html' %}
+
+{% block title %}{{ portfolio.name }} - Portfolio Details{% endblock %}
+
+{% block content %}
+<h2 class="mb-3">📈 {{ portfolio.name }}</h2>
+<p class="text-muted">Portfolio ID: {{ portfolio.portfolio_id }}</p>
+
+<a href="{{ url_for('add_symbol', portfolio_id=portfolio.portfolio_id) }}" class="btn btn-success mb-4">➕ Add Symbol</a>
+
+{% if symbols %}
+    <table class="table table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Ticker</th>
+                <th>Sector</th>
+                <th>Current Price</th>
+                <th>Shares</th>
+                <th>Current Value</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in symbols %}
+            <tr>
+                <td>{{ s.ticker }}</td>
+                <td>{{ s.sector }}</td>
+                <td>${{ s.current_data.last_price }}</td>
+                <td>{{ s.current_shares }}</td>
+                <td>${{ s.current_value }}</td>
+                <td>
+                    <a href="{{ url_for('add_transaction', portfolio_id=portfolio.portfolio_id, symbol_id=s.symbol_id) }}" class="btn btn-sm btn-outline-primary">Add Txn</a>
+                </td>
+            </tr>
+            {% if s.transactions %}
+            <tr>
+                <td colspan="6">
+                    <table class="table table-bordered mt-2">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Shares</th>
+                                <th>Price</th>
+                                <th>Cost</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% set total_cost = 0 %}
+                            {% set total_buy = 0 %}
+                            {% set total_sell = 0 %}
+                            {% for txn in s.transactions %}
+                            <tr>
+                                <td>{{ txn.transaction_date }}</td>
+                                <td>{{ txn.transaction_type }}</td>
+                                <td>{{ txn.shares }}</td>
+                                <td>${{ txn.price }}</td>
+                                <td>${{ txn.transaction_cost }}</td>
+                            </tr>
+                            {% if txn.transaction_type == 'Buy' %}
+                                {% set total_cost = total_cost + (txn.shares * txn.price + txn.transaction_cost) %}
+                                {% set total_buy = total_buy + txn.shares %}
+                            {% elif txn.transaction_type == 'Sell' %}
+                                {% set total_sell = total_sell + txn.shares %}
+                            {% endif %}
+                            {% endfor %}
+                        </tbody>
+                        <tfoot class="table-secondary">
+                            <tr>
+                                <td colspan="5">
+                                    <strong>Summary:</strong>
+                                    Bought: {{ total_buy }} shares,
+                                    Sold: {{ total_sell }} shares,
+                                    Avg Cost/Share:
+                                    {% if total_buy > 0 %}${{ (total_cost / total_buy) | round(2) }}{% else %}-{% endif %},
+                                    Total Cost: ${{ total_cost | round(2) }}
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <div class="alert alert-info">This portfolio has no stocks yet. Use the button above to add one.</div>
+{% endif %}
+<hr class="my-4">
+<h4>📊 Portfolio Summary</h4>
+<p><strong>Total Market Value:</strong> ${{ portfolio_summary.market_value }}</p>
+<p><strong>Total Invested Capital:</strong> ${{ portfolio_summary.total_cost }}</p>
+<p><strong>Unrealised P&amp;L:</strong> ${{ portfolio_summary.pnl }}</p>
+{% endblock %}

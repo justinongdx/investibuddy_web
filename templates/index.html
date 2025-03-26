@@ -1,0 +1,17 @@
+{% extends 'layout.html' %}
+
+{% block title %}Home - InvestiBuddy{% endblock %}
+
+{% block content %}
+<div class="text-center">
+    <h1 class="display-4">Welcome to InvestiBuddy! 💹</h1>
+    <p class="lead">Your personal buddy for smarter investing and portfolio tracking.</p>
+    <hr>
+    {% if not session.username %}
+        <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg">Login</a>
+        <a href="{{ url_for('register') }}" class="btn btn-outline-success btn-lg">Register</a>
+    {% else %}
+        <a href="{{ url_for('dashboard') }}" class="btn btn-primary btn-lg">Go to Dashboard</a>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'layout.html' %}
+
+{% block title %}Register - InvestiBuddy{% endblock %}
+
+{% block content %}
+<h2>Register</h2>
+<form method="POST">
+    <div class="mb-3">
+        <label for="username" class="form-label">Username</label>
+        <input type="text" class="form-control" id="username" name="username" required>
+    </div>
+    <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" class="form-control" id="password" name="password" required>
+    </div>
+    <div class="mb-3">
+        <label for="risk_tolerance" class="form-label">Risk Tolerance</label>
+        <select class="form-select" id="risk_tolerance" name="risk_tolerance" required>
+            <option value="Low">Low (Max 20% sector exposure)</option>
+            <option value="Medium">Medium (Max 30%)</option>
+            <option value="High">High (Max 40%)</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-success">Register</button>
+</form>
+{% endblock %}

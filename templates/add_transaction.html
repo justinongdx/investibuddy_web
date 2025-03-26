@@ -1,0 +1,29 @@
+{% extends 'layout.html' %}
+
+{% block title %}Add Transaction - {{ symbol.ticker }}{% endblock %}
+
+{% block content %}
+<h2>Add Transaction for {{ symbol.ticker }}</h2>
+<form method="POST">
+    <div class="mb-3">
+        <label for="transaction_type" class="form-label">Transaction Type</label>
+        <select class="form-select" id="transaction_type" name="transaction_type" required>
+            <option value="Buy">Buy</option>
+            <option value="Sell">Sell</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="shares" class="form-label">Shares</label>
+        <input type="number" class="form-control" id="shares" name="shares" step="0.01" required>
+    </div>
+    <div class="mb-3">
+        <label for="price" class="form-label">Price per Share (leave blank to use live price)</label>
+        <input type="number" class="form-control" id="price" name="price" step="0.01">
+    </div>
+    <div class="mb-3">
+        <label for="transaction_cost" class="form-label">Transaction Cost</label>
+        <input type="number" class="form-control" id="transaction_cost" name="transaction_cost" step="0.01" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Add Transaction</button>
+</form>
+{% endblock %}

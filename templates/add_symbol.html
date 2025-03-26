@@ -1,0 +1,14 @@
+{% extends 'layout.html' %}
+
+{% block title %}Add Symbol - {{ portfolio.name }}{% endblock %}
+
+{% block content %}
+<h2>Add Stock to {{ portfolio.name }}</h2>
+<form method="POST">
+    <div class="mb-3">
+        <label for="ticker" class="form-label">Stock Ticker Symbol</label>
+        <input type="text" class="form-control" id="ticker" name="ticker" placeholder="e.g., AAPL" required>
+    </div>
+    <button type="submit" class="btn btn-success">Add Symbol</button>
+</form>
+{% endblock %}
