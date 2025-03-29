@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e1a8e9de-b7af-4b2f-b553-27f796069872" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/templates/portfolio_detail.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/portfolio_detail.html" afterDir="false" />
-    </list>
+    <list default="true" id="e1a8e9de-b7af-4b2f-b553-27f796069872" name="Changes" comment="added an arrow to show/hide transactions under each ticker." />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -111,12 +109,25 @@
       <option name="presentableId" value="Default" />
       <updated>1742888108861</updated>
       <workItem from="1742888109912" duration="11168000" />
-      <workItem from="1743258247719" duration="5269000" />
+      <workItem from="1743258247719" duration="6912000" />
     </task>
+    <task id="LOCAL-00001" summary="added an arrow to show/hide transactions under each ticker.">
+      <option name="closed" value="true" />
+      <created>1743263747780</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1743263747780</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="added an arrow to show/hide transactions under each ticker." />
+    <option name="LAST_COMMIT_MESSAGE" value="added an arrow to show/hide transactions under each ticker." />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/investibuddy_web$investibuddy_web.coverage" NAME="investibuddy_web Coverage Results" MODIFIED="1743258700496" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
