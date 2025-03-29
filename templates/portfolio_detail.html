@@ -7,6 +7,7 @@
 <p class="text-muted">Portfolio ID: {{ portfolio.portfolio_id }}</p>
 
 <a href="{{ url_for('add_symbol', portfolio_id=portfolio.portfolio_id) }}" class="btn btn-success mb-4">➕ Add Symbol</a>
+
 {% if symbols %}
     <table class="table table-striped">
         <thead class="table-dark">
@@ -140,6 +141,7 @@
         });
     });
     </script>
+
 {% else %}
     <div class="alert alert-info">This portfolio has no stocks yet. Use the button above to add one.</div>
 {% endif %}
