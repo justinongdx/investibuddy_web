@@ -1,8 +1,10 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash, send_file
 from models.database_manager import DatabaseManager, create_database
 from models.user_manager import UserManager
 from models.portfolio_manager import PortfolioManager
-
+from io import BytesIO
+import pandas as pd
+import datetime
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'
 
@@ -202,13 +204,89 @@ def add_transaction(portfolio_id, symbol_id):
         price = float(price_str) if price_str else symbol.current_data['last_price']
         cost = float(request.form['transaction_cost'])
 
+        # Date cannot be a future date
+        try:
+            txn_date_obj = datetime.datetime.strptime(txn_date, '%Y-%m-%d').date()
+            if txn_date_obj > datetime.date.today():
+                flash("❌ Transaction date cannot be in the future.")
+                return redirect(url_for('add_transaction', portfolio_id=portfolio_id, symbol_id=symbol_id))
+        except ValueError:
+            flash("❌ Invalid date format. Please use YYYY-MM-DD.")
+            return redirect(url_for('add_transaction', portfolio_id=portfolio_id, symbol_id=symbol_id))
+
+        # Prevent selling more shares than currently owned
+        total_bought = sum(txn.shares for txn in symbol.transactions if txn.transaction_type.lower() == 'buy')
+        total_sold = sum(txn.shares for txn in symbol.transactions if txn.transaction_type.lower() == 'sell')
+        current_shares = total_bought - total_sold
+
+        if txn_type.lower() == 'sell' and shares > current_shares:
+            flash(f"❌ Cannot sell {shares} shares. You only own {current_shares} shares.")
+            return redirect(url_for('add_transaction', portfolio_id=portfolio_id, symbol_id=symbol_id))
+
+        # Proceed to save transaction
         portfolio_manager.add_transaction(symbol_id, txn_type, shares, price, cost, txn_date)
         flash(f"{txn_type} transaction for {shares} shares of {symbol.ticker} added!")
         return redirect(url_for('portfolio_detail', portfolio_id=portfolio_id))
 
     return render_template('add_transaction.html', symbol=symbol, portfolio_id=portfolio_id)
 
+@app.route('/portfolio/<int:portfolio_id>/sector-exposure')
+def sector_exposure(portfolio_id):
+    if 'user_id' not in session:
+        flash("⚠️ Please log in to view sector exposure.")
+        return redirect(url_for('login'))
+
+    rows = db_manager.execute_query(
+        "SELECT portfolio_id FROM portfolios WHERE portfolio_id = ? AND user_id = ?",
+        (portfolio_id, session['user_id'])
+    )
+
+    if not rows:
+        flash("❌ Portfolio not found or does not belong to you.")
+        return redirect(url_for('view_portfolios'))
+
+    portfolio = {
+        'portfolio_id': portfolio_id,
+        'name': rows[0][0]
+    }
+
+    exposure = portfolio_manager.calculate_sector_exposure(portfolio_id)
+    return render_template('sector_exposure.html', portfolio=portfolio, portfolio_id=portfolio_id, sector_exposure=exposure)
+
+
+@app.route('/portfolio/<int:portfolio_id>/export')
+def export_portfolio_excel(portfolio_id):
+    symbols = portfolio_manager.get_portfolio_symbols(portfolio_id)
+
+    data = []
+    for s in symbols:
+        metrics = portfolio_manager.calculate_symbol_metrics(s)
+        data.append({
+            "Ticker": metrics["ticker"],
+            "Sector": metrics["sector"],
+            "Current Price": metrics["current_price"],
+            "Avg Cost": metrics["avg_cost"],
+            "Shares": metrics["current_shares"],
+            "Investment": metrics["total_investment"],
+            "Current Value": metrics["current_value"],
+            "Unrealised P/L": metrics["unrealised_pl"],
+            "Unrealised P/L %": metrics["unrealised_pl_percent"],
+            "Day Change": metrics["day_change"],
+            "Day Change %": metrics["day_change_percent"]
+        })
+
+    df = pd.DataFrame(data)
+    output = BytesIO()
+    with pd.ExcelWriter(output, engine='openpyxl') as writer:
+        df.to_excel(writer, index=False, sheet_name='Portfolio')
+
+    output.seek(0)
+    return send_file(
+        output,
+        as_attachment=True,
+        download_name=f'portfolio_{portfolio_id}.xlsx',
+        mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
 
 if __name__ == '__main__':
     app.run(debug=True)
-

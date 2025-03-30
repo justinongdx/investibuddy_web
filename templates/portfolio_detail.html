@@ -2,96 +2,104 @@
 
 {% block title %}{{ portfolio.name }} - Portfolio Details{% endblock %}
 
+
 {% block content %}
+
 <h2 class="mb-3">📈 {{ portfolio.name }}</h2>
 <p class="text-muted">Portfolio ID: {{ portfolio.portfolio_id }}</p>
 
 <a href="{{ url_for('add_symbol', portfolio_id=portfolio.portfolio_id) }}" class="btn btn-success mb-4">➕ Add Symbol</a>
+<a href="{{ url_for('export_portfolio_excel', portfolio_id=portfolio.portfolio_id) }}" class="btn btn-outline-secondary mb-4 ms-2">
+  📥 Export to Excel
+</a>
+<a href="{{ url_for('sector_exposure', portfolio_id=portfolio.portfolio_id) }}" class="btn btn-info mb-4 ms-2">
+  🧭 View Sector Exposure
+</a>
 
 {% if symbols %}
-    <table class="table table-striped">
-        <thead class="table-dark">
-            <tr>
-                <th>Ticker</th>
-                <th>Sector</th>
-                <th>Current Price</th>
-                <th>Shares</th>
-                <th>Current Value</th>
-                <th>Actions</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for s in symbols %}
-            <tr>
-                <td>{{ s.ticker }}</td>
-                <td>{{ s.sector }}</td>
-                <td>${{ s.current_data.last_price }}</td>
-                <td>{{ s.current_shares }}</td>
-                <td>${{ s.current_value }}</td>
-                <td>
-                    <a href="{{ url_for('add_transaction', portfolio_id=portfolio.portfolio_id, symbol_id=s.symbol_id) }}" class="btn btn-sm btn-outline-primary">Add Txn</a>
-                </td>
-                <td class="text-center">
-                    {% if s.transactions %}
-                    <span class="toggle-transactions" data-target="transactions-{{ s.symbol_id }}" style="cursor: pointer;">
-                        <span class="toggle-icon">&#9660;</span>
-                    </span>
-                    {% endif %}
-                </td>
-            </tr>
-            {% if s.transactions %}
-            <tr id="transactions-{{ s.symbol_id }}" class="transaction-details" style="display: none;">
-                <td colspan="7">
-                    <table class="table table-bordered mt-2 mb-0">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Date</th>
-                                <th>Type</th>
-                                <th>Shares</th>
-                                <th>Price</th>
-                                <th>Cost</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% set total_cost = 0 %}
-                            {% set total_buy = 0 %}
-                            {% set total_sell = 0 %}
-                            {% for txn in s.transactions %}
-                            <tr>
-                                <td>{{ txn.transaction_date }}</td>
-                                <td>{{ txn.transaction_type }}</td>
-                                <td>{{ txn.shares }}</td>
-                                <td>${{ txn.price }}</td>
-                                <td>${{ txn.transaction_cost }}</td>
-                            </tr>
-                            {% if txn.transaction_type == 'Buy' %}
-                                {% set total_cost = total_cost + ((txn.shares | float) * (txn.price | float) + (txn.transaction_cost | float)) %}
-                               {% set total_buy = total_buy + (txn.shares | float) %}
-                            {% elif txn.transaction_type == 'Sell' %}
-                                {% set total_sell = total_sell + (txn.shares | float) %}
-                            {% endif %}
-                            {% endfor %}
-                        </tbody>
-                        <tfoot class="table-secondary">
-                            <tr>
-                                <td colspan="5">
-                                    <strong>Summary:</strong>
-                                    Bought: {{ total_buy }} shares,
-                                    Sold: {{ total_sell }} shares,
-                                    Avg Cost/Share:
-                                    {% if total_buy > 0 %}${{ (total_cost / total_buy) | round(2) }}{% else %}-{% endif %},
-                                    Total Cost: ${{ total_cost | round(2) }}
-                                </td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </td>
-            </tr>
-            {% endif %}
-            {% endfor %}
-        </tbody>
-    </table>
+<table class="table table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Ticker</th>
+            <th>Sector</th>
+            <th>Current Price</th>
+            <th>Shares</th>
+            <th>Current Value</th>
+            <th>Actions</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for s in symbols %}
+        <tr>
+            <td>{{ s.ticker }}</td>
+            <td>{{ s.sector }}</td>
+            <td>${{ s.current_data.last_price }}</td>
+            <td>{{ s.current_shares }}</td>
+            <td>${{ s.current_value }}</td>
+            <td>
+                <a href="{{ url_for('add_transaction', portfolio_id=portfolio.portfolio_id, symbol_id=s.symbol_id) }}" class="btn btn-sm btn-outline-primary">Add Txn</a>
+            </td>
+            <td class="text-center">
+                {% if s.transactions %}
+                <span class="toggle-transactions" data-target="transactions-{{ s.symbol_id }}" style="cursor: pointer;">
+                    <span class="toggle-icon">&#9660;</span>
+                </span>
+                {% endif %}
+            </td>
+        </tr>
+        {% if s.transactions %}
+        <tr id="transactions-{{ s.symbol_id }}" class="transaction-details" style="display: none;">
+            <td colspan="7">
+                <table class="table table-bordered mt-2 mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Shares</th>
+                            <th>Price</th>
+                            <th>Cost</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% set summary = namespace(total_cost=0, total_buy=0, total_sell=0) %}
+                        {% for txn in s.transactions %}
+                        <tr>
+                            <td>{{ txn.transaction_date }}</td>
+                            <td>{{ txn.transaction_type }}</td>
+                            <td>{{ txn.shares }}</td>
+                            <td>${{ txn.price }}</td>
+                            <td>${{ txn.transaction_cost }}</td>
+                        </tr>
+
+                        {% if txn.transaction_type.lower() == 'buy' %}
+                            {% set summary.total_cost = summary.total_cost + ((txn.shares | float) * (txn.price | float)) + (txn.transaction_cost | float) %}
+                            {% set summary.total_buy = summary.total_buy + (txn.shares | float) %}
+                        {% elif txn.transaction_type.lower() == 'sell' %}
+                            {% set summary.total_sell = summary.total_sell + (txn.shares | float) %}
+                        {% endif %}
+                        {% endfor %}
+                    </tbody>
+                    <tfoot class="table-secondary">
+                        <tr>
+                            <td colspan="5">
+                                <strong>Summary:</strong>
+                                Bought: {{ summary.total_buy }} shares,
+                                Sold: {{ summary.total_sell }} shares,
+                                Avg Cost/Share:
+                                {% if summary.total_buy > 0 %}${{ (summary.total_cost / summary.total_buy) | round(2) }}{% else %}-{% endif %},
+                                Total Cost: ${{ summary.total_cost | round(2) }}
+
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+    </tbody>
+</table>
 
     <style>
     .toggle-transactions {
