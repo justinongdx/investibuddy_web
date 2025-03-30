@@ -16,75 +16,144 @@
   🧭 View Sector Exposure
 </a>
 
-
 {% if symbols %}
-    <table class="table table-striped">
-        <thead class="table-dark">
-            <tr>
-                <th>Ticker</th>
-                <th>Sector</th>
-                <th>Current Price</th>
-                <th>Shares</th>
-                <th>Current Value</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for s in symbols %}
-            <tr>
-                <td>{{ s.ticker }}</td>
-                <td>{{ s.sector }}</td>
-                <td>${{ s.current_data.last_price }}</td>
-                <td>{{ s.current_shares }}</td>
-                <td>${{ s.current_value }}</td>
-                <td>
-                    <a href="{{ url_for('add_transaction', portfolio_id=portfolio.portfolio_id, symbol_id=s.symbol_id) }}" class="btn btn-sm btn-outline-primary">Add Txn</a>
-                </td>
-            </tr>
+<table class="table table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Ticker</th>
+            <th>Sector</th>
+            <th>Current Price</th>
+            <th>Shares</th>
+            <th>Current Value</th>
+            <th>Actions</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for s in symbols %}
+        <tr>
+            <td>{{ s.ticker }}</td>
+            <td>{{ s.sector }}</td>
+            <td>${{ s.current_data.last_price }}</td>
+            <td>{{ s.current_shares }}</td>
+            <td>${{ s.current_value }}</td>
+            <td>
+                <a href="{{ url_for('add_transaction', portfolio_id=portfolio.portfolio_id, symbol_id=s.symbol_id) }}" class="btn btn-sm btn-outline-primary">Add Txn</a>
+            </td>
+            <td class="text-center">
+                {% if s.transactions %}
+                <span class="toggle-transactions" data-target="transactions-{{ s.symbol_id }}" style="cursor: pointer;">
+                    <span class="toggle-icon">&#9660;</span>
+                </span>
+                {% endif %}
+            </td>
+        </tr>
+        {% if s.transactions %}
+        <tr id="transactions-{{ s.symbol_id }}" class="transaction-details" style="display: none;">
+            <td colspan="7">
+                <table class="table table-bordered mt-2 mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Shares</th>
+                            <th>Price</th>
+                            <th>Cost</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% set summary = namespace(total_cost=0, total_buy=0, total_sell=0) %}
+                        {% for txn in s.transactions %}
+                        <tr>
+                            <td>{{ txn.transaction_date }}</td>
+                            <td>{{ txn.transaction_type }}</td>
+                            <td>{{ txn.shares }}</td>
+                            <td>${{ txn.price }}</td>
+                            <td>${{ txn.transaction_cost }}</td>
+                        </tr>
 
-            {% if s.transactions %}
-            <tr>
-                <td colspan="6">
-                    <table class="table table-bordered mt-2">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Date</th>
-                                <th>Type</th>
-                                <th>Shares</th>
-                                <th>Price</th>
-                                <th>Cost</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for txn in s.transactions %}
-                            <tr>
-                                <td>{{ txn.transaction_date }}</td>
-                                <td>{{ txn.transaction_type }}</td>
-                                <td>{{ txn.shares }}</td>
-                                <td>${{ txn.price }}</td>
-                                <td>${{ txn.transaction_cost }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                        {% if txn.transaction_type.lower() == 'buy' %}
+                            {% set summary.total_cost = summary.total_cost + ((txn.shares | float) * (txn.price | float)) + (txn.transaction_cost | float) %}
+                            {% set summary.total_buy = summary.total_buy + (txn.shares | float) %}
+                        {% elif txn.transaction_type.lower() == 'sell' %}
+                            {% set summary.total_sell = summary.total_sell + (txn.shares | float) %}
+                        {% endif %}
+                        {% endfor %}
+                    </tbody>
+                    <tfoot class="table-secondary">
+                        <tr>
+                            <td colspan="5">
+                                <strong>Summary:</strong>
+                                Bought: {{ summary.total_buy }} shares,
+                                Sold: {{ summary.total_sell }} shares,
+                                Avg Cost/Share:
+                                {% if summary.total_buy > 0 %}${{ (summary.total_cost / summary.total_buy) | round(2) }}{% else %}-{% endif %},
+                                Total Cost: ${{ summary.total_cost | round(2) }}
 
-                    {% set summary = s.get_summary() %}
-                    <div><strong>Summary:</strong>
-                        Bought: {{ summary.bought }} shares,
-                        Sold: {{ summary.sold }} shares,
-                        Avg Cost/Share: {{ summary.avg_cost }},
-                        Total Cost: ${{ summary.total_cost }}
-                    </div>
-                </td>
-            </tr>
-            {% endif %}
-            {% endfor %}
-        </tbody>
-    </table>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+    </tbody>
+</table>
+
+    <style>
+    .toggle-transactions {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        text-align: center;
+        line-height: 20px;
+    }
+
+    .transaction-details {
+        background-color: #f8f9fa;
+    }
+
+    /* Add a subtle animation to the arrow */
+    .toggle-icon {
+        display: inline-block;
+        transition: transform 0.3s ease;
+    }
+
+    /* Remove bottom border of the row above the expanded transactions */
+    tr:has(+ tr.transaction-details:not([style*="display: none"])) {
+        border-bottom: none;
+    }
+    </style>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggleElements = document.querySelectorAll('.toggle-transactions');
+
+        toggleElements.forEach(function(element) {
+            element.addEventListener('click', function() {
+                const targetId = this.getAttribute('data-target');
+                const targetRow = document.getElementById(targetId);
+                const icon = this.querySelector('.toggle-icon');
+
+                if (targetRow.style.display === 'none') {
+                    targetRow.style.display = 'table-row';
+                    icon.innerHTML = '&#x25B2;';
+                    icon.style.transform = 'rotate(0deg)';
+                } else {
+                    targetRow.style.display = 'none';
+                    icon.innerHTML = '&#9660;';
+                    icon.style.transform = 'rotate(0deg)';
+                }
+            });
+        });
+    });
+    </script>
+
 {% else %}
-    <p>No symbols in this portfolio yet.</p>
+    <div class="alert alert-info">This portfolio has no stocks yet. Use the button above to add one.</div>
 {% endif %}
-
+<hr class="my-4">
 <h4>📊 Portfolio Summary</h4>
 <p><strong>Total Market Value:</strong> ${{ portfolio_summary.market_value }}</p>
 <p><strong>Total Invested Capital:</strong> ${{ portfolio_summary.total_cost }}</p>
