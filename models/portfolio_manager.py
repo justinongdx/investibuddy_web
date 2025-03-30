@@ -76,4 +76,82 @@ class PortfolioManager:
             return symbol
         return None
 
+    def calculate_sector_exposure(self, portfolio_id: int) -> dict:
+        symbols = self.get_portfolio_symbols(portfolio_id)
+        exposure = {}
+
+        # Calculate total portfolio value by summing symbol metrics
+        total_value = 0
+        symbol_metrics = {}
+
+        for s in symbols:
+            metrics = self.calculate_symbol_metrics(s)
+            symbol_metrics[s.ticker] = metrics
+            total_value += metrics["current_value"]
+
+        if total_value == 0:
+            return {}
+
+        for s in symbols:
+            sector = s.sector or "Unknown"
+            value = symbol_metrics[s.ticker]["current_value"]
+            if sector not in exposure:
+                exposure[sector] = value
+            else:
+                exposure[sector] += value
+
+        for sector in exposure:
+            value = exposure[sector]
+            exposure[sector] = {
+                "value": round(value, 2),
+                "percentage": round((value / total_value) * 100, 2)
+            }
+
+        return exposure
+
+    def calculate_symbol_metrics(self, symbol):
+        current_price = symbol.current_data.get("last_price",
+                                                0) if symbol.current_data and "error" not in symbol.current_data else 0
+        total_shares = 0
+        total_investment = 0
+        total_sold_amount = 0
+        total_sold_shares = 0
+
+        for txn in symbol.transactions:
+            if txn.transaction_type.lower() == "buy":
+                total_shares += txn.shares
+                total_investment += (txn.shares * txn.price) + txn.transaction_cost
+            elif txn.transaction_type.lower() == "sell":
+                total_sold_shares += txn.shares
+                total_sold_amount += (txn.shares * txn.price) - txn.transaction_cost
+
+        current_shares = total_shares - total_sold_shares
+        avg_cost = total_investment / total_shares if total_shares > 0 else 0
+
+        # Realised P/L
+        realised_pl = 0
+        if total_sold_shares > 0:
+            avg_cost_per_share = total_investment / total_shares if total_shares > 0 else 0
+            realised_pl = total_sold_amount - (total_sold_shares * avg_cost_per_share)
+
+        current_value = current_shares * current_price
+        unrealised_pl = current_value - (current_shares * avg_cost)
+
+        return {
+            "ticker": symbol.ticker,
+            "sector": symbol.sector,
+            "current_price": current_price,
+            "avg_cost": avg_cost,
+            "current_shares": current_shares,
+            "total_investment": total_investment,
+            "realised_pl": realised_pl,
+            "current_value": current_value,
+            "unrealised_pl": unrealised_pl,
+            "unrealised_pl_percent": (unrealised_pl / (
+                        current_shares * avg_cost) * 100) if current_shares > 0 and avg_cost > 0 else 0,
+            "day_change": symbol.current_data.get("change",
+                                                  0) if symbol.current_data and "error" not in symbol.current_data else 0,
+            "day_change_percent": symbol.current_data.get("change_percent",
+                                                          0) if symbol.current_data and "error" not in symbol.current_data else 0
+        }
 
