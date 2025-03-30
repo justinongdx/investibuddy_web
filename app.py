@@ -4,6 +4,7 @@ from models.user_manager import UserManager
 from models.portfolio_manager import PortfolioManager
 from io import BytesIO
 import pandas as pd
+import datetime
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'
 
@@ -203,6 +204,26 @@ def add_transaction(portfolio_id, symbol_id):
         price = float(price_str) if price_str else symbol.current_data['last_price']
         cost = float(request.form['transaction_cost'])
 
+        # Date cannot be a future date
+        try:
+            txn_date_obj = datetime.datetime.strptime(txn_date, '%Y-%m-%d').date()
+            if txn_date_obj > datetime.date.today():
+                flash("❌ Transaction date cannot be in the future.")
+                return redirect(url_for('add_transaction', portfolio_id=portfolio_id, symbol_id=symbol_id))
+        except ValueError:
+            flash("❌ Invalid date format. Please use YYYY-MM-DD.")
+            return redirect(url_for('add_transaction', portfolio_id=portfolio_id, symbol_id=symbol_id))
+
+        # Prevent selling more shares than currently owned
+        total_bought = sum(txn.shares for txn in symbol.transactions if txn.transaction_type.lower() == 'buy')
+        total_sold = sum(txn.shares for txn in symbol.transactions if txn.transaction_type.lower() == 'sell')
+        current_shares = total_bought - total_sold
+
+        if txn_type.lower() == 'sell' and shares > current_shares:
+            flash(f"❌ Cannot sell {shares} shares. You only own {current_shares} shares.")
+            return redirect(url_for('add_transaction', portfolio_id=portfolio_id, symbol_id=symbol_id))
+
+        # Proceed to save transaction
         portfolio_manager.add_transaction(symbol_id, txn_type, shares, price, cost, txn_date)
         flash(f"{txn_type} transaction for {shares} shares of {symbol.ticker} added!")
         return redirect(url_for('portfolio_detail', portfolio_id=portfolio_id))
