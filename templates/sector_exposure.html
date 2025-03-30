@@ -1,0 +1,77 @@
+{% extends 'layout.html' %}
+
+{% block title %}Sector Exposure for {{ portfolio_id }}{% endblock %}
+
+{% block content %}
+<h3 class="text-center mb-4">📊 Sector Exposure for {{ portfolio_id }}</h3>
+
+<div style="max-width: 500px; margin: auto;">
+  <canvas id="sectorChart"></canvas>
+</div>
+
+<div class="text-center mt-4">
+  <a href="{{ url_for('portfolio_detail', portfolio_id=portfolio_id) }}" class="btn btn-secondary">
+    🔙 Back to Portfolio
+  </a>
+</div>
+
+<div class="mt-4 d-flex justify-content-center">
+  <table class="table table-sm table-bordered w-auto">
+    <thead class="table-light">
+      <tr>
+        <th>Sector</th>
+        <th>Value ($)</th>
+        <th>Percentage (%)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for sector, data in sector_exposure.items() %}
+      <tr>
+        <td>{{ sector }}</td>
+        <td>${{ "%.2f"|format(data.value) }}</td>
+        <td>{{ "%.1f"|format(data.percentage) }}%</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const data = {
+    labels: {{ sector_exposure.keys()|list|tojson }},
+    datasets: [{
+      data: {{ sector_exposure.values()|map(attribute='percentage')|list|tojson }},
+      backgroundColor: [
+        '#4e79a7', '#f28e2b', '#e15759', '#76b7b2',
+        '#59a14f', '#edc949', '#af7aa1', '#ff9da7',
+        '#9c755f', '#bab0ab'
+      ],
+      borderWidth: 1
+    }]
+  };
+
+  const config = {
+    type: 'pie',
+    data: data,
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            boxWidth: 20,
+            padding: 15
+          }
+        },
+        title: {
+          display: true,
+          text: 'Sector Exposure Breakdown'
+        }
+      }
+    }
+  };
+
+  new Chart(document.getElementById('sectorChart'), config);
+</script>
+{% endblock %}
