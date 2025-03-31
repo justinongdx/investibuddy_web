@@ -155,3 +155,33 @@ class PortfolioManager:
                                                           0) if symbol.current_data and "error" not in symbol.current_data else 0
         }
 
+    def get_portfolio_by_id(self, portfolio_id: int) -> Optional[Portfolio]:
+        row = self.db_manager.execute_query(
+            "SELECT portfolio_id, user_id, name FROM portfolios WHERE portfolio_id = ?",
+            (portfolio_id,)
+        )
+        if row:
+            return Portfolio(*row[0])
+        return None
+
+def calculate_portfolio_summary(symbols: list, manager=None):
+    if manager is None:
+        from models.portfolio_manager import PortfolioManager
+        from models.database_manager import DatabaseManager
+        manager = PortfolioManager(DatabaseManager("portfolio_manager.db"))
+
+    market_value = 0
+    total_cost = 0
+
+    for symbol in symbols:
+        metrics = manager.calculate_symbol_metrics(symbol)
+        market_value += metrics['current_value']
+        total_cost += metrics['current_shares'] * metrics['avg_cost']
+
+    return {
+        "market_value": round(market_value, 2),
+        "total_cost": round(total_cost, 2),
+        "pnl": round(market_value - total_cost, 2)
+    }
+
+

@@ -3,6 +3,13 @@ from models.database_manager import DatabaseManager, create_database
 from models.user_manager import UserManager
 from models.portfolio_manager import PortfolioManager
 from io import BytesIO
+from models.entities import Portfolio
+from dotenv import load_dotenv
+from models.portfolio_manager import calculate_portfolio_summary
+
+load_dotenv()
+
+
 import pandas as pd
 import datetime
 app = Flask(__name__)
@@ -287,6 +294,37 @@ def export_portfolio_excel(portfolio_id):
         download_name=f'portfolio_{portfolio_id}.xlsx',
         mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
+from flask import render_template, redirect, url_for
+from utils.gemini import format_portfolio_for_gemini, get_gemini_recommendation
+
+@app.route('/portfolio/<int:portfolio_id>/recommendations')
+def recommendations(portfolio_id):
+    portfolio = portfolio_manager.get_portfolio_by_id(portfolio_id)
+    symbols = portfolio_manager.get_portfolio_symbols(portfolio_id)
+
+    # Calculate updated metrics BEFORE rendering template
+    symbol_metrics = [portfolio_manager.calculate_symbol_metrics(s) for s in symbols]
+
+    # Use the calculated data for Gemini + frontend
+    formatted = format_portfolio_for_gemini(symbol_metrics)
+    gemini_response = get_gemini_recommendation(formatted)
+
+    # This ensures your data table doesn't go blank!
+    for i, sym in enumerate(symbols):
+        sym.current_data = {
+            "last_price": symbol_metrics[i]["current_price"]
+        }
+        sym.current_shares = symbol_metrics[i]["current_shares"]
+        sym.current_value = symbol_metrics[i]["current_value"]
+
+    return render_template(
+        "portfolio_detail.html",
+        portfolio=portfolio,
+        symbols=symbols,
+        portfolio_summary=calculate_portfolio_summary(symbols),
+        recommendation=gemini_response
+    )
+
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -15,6 +15,10 @@
 <a href="{{ url_for('sector_exposure', portfolio_id=portfolio.portfolio_id) }}" class="btn btn-info mb-4 ms-2">
   🧭 View Sector Exposure
 </a>
+<a href="{{ url_for('recommendations', portfolio_id=portfolio.portfolio_id) }}" class="btn btn-warning mb-4 ms-2">
+  🤖 Get Gemini Recommendations
+</a>
+
 
 {% if symbols %}
 <table class="table table-striped">
@@ -158,4 +162,16 @@
 <p><strong>Total Market Value:</strong> ${{ portfolio_summary.market_value }}</p>
 <p><strong>Total Invested Capital:</strong> ${{ portfolio_summary.total_cost }}</p>
 <p><strong>Unrealised P&amp;L:</strong> ${{ portfolio_summary.pnl }}</p>
+{% if recommendation %}
+<hr class="my-4">
+<h4>🤖 Gemini AI Recommendations</h4>
+<div class="alert alert-secondary" style="white-space: pre-wrap;">
+  {{ recommendation }}
+</div>
+{% endif %}
 {% endblock %}
+
+
+
+
+
