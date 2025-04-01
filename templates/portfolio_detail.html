@@ -3,13 +3,11 @@
 {% block title %}{{ portfolio.name }} - Portfolio Details{% endblock %}
 
 {% block content %}
-<div class="container mt-5 mb-5">
 
-  <!-- Header -->
+<div class="container mt-5 mb-5">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-      <h2 class="fw-bold mb-0"><i class="bi bi-bar-chart-line-fill me-2"></i>{{ portfolio.name }}</h2>
-      <p class="text-muted">Portfolio ID: {{ portfolio.portfolio_id }}</p>
+      <h2 class="fw-bold mb-0">{{ portfolio.name }}</h2>
     </div>
     <div>
       <a href="{{ url_for('add_symbol', portfolio_id=portfolio.portfolio_id) }}" class="btn btn-success me-2">➕ Add Symbol</a>
@@ -18,39 +16,57 @@
     </div>
   </div>
 
-  <!-- Portfolio Performance -->
-  <div class="card mb-4">
-    <div class="card-body">
-      <h5 class="card-title mb-3">📉 Portfolio Performance</h5>
-      <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-3">
-        <div class="d-flex justify-content-center w-100 mb-2 mb-md-0">
-          <div class="btn-group" role="group">
-            <button class="btn btn-sm btn-outline-primary" onclick="loadChart('1d')">1D</button>
-            <button class="btn btn-sm btn-outline-primary" onclick="loadChart('5d')">1W</button>
-            <button class="btn btn-sm btn-outline-primary" onclick="loadChart('1mo')">1M</button>
-            <button class="btn btn-sm btn-outline-primary" onclick="loadChart('ytd')">YTD</button>
-            <button class="btn btn-sm btn-outline-primary" onclick="loadChart('1y')">1Y</button>
-            <button class="btn btn-sm btn-outline-primary" onclick="loadChart('max')">Max</button>
+  <div class="row mb-4">
+    <div class="col-md-8">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title mb-3">📉 Portfolio Performance</h5>
+          <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-3">
+            <div class="d-flex justify-content-center w-100 mb-2 mb-md-0">
+              <div class="btn-group" role="group">
+                <button class="btn btn-sm btn-outline-primary" onclick="loadChart('1d')">1D</button>
+                <button class="btn btn-sm btn-outline-primary" onclick="loadChart('5d')">1W</button>
+                <button class="btn btn-sm btn-outline-primary" onclick="loadChart('1mo')">1M</button>
+                <button class="btn btn-sm btn-outline-primary" onclick="loadChart('ytd')">YTD</button>
+                <button class="btn btn-sm btn-outline-primary" onclick="loadChart('1y')">1Y</button>
+                <button class="btn btn-sm btn-outline-primary" onclick="loadChart('max')">Max</button>
+              </div>
+            </div>
+            <div class="d-flex align-items-center">
+              <label class="form-check-label me-2">Show %</label>
+              <input type="checkbox" class="form-check-input" id="showPercentage" />
+            </div>
           </div>
-        </div>
-        <div class="d-flex align-items-center">
-          <label class="form-check-label me-2">Show %</label>
-          <input type="checkbox" class="form-check-input" id="showPercentage" />
+          <canvas id="portfolioChart" height="200"></canvas>
         </div>
       </div>
-      <canvas id="portfolioChart" height="100"></canvas>
+    </div>
+
+    <div class="col-md-4">
+      <div class="d-flex flex-column justify-content-between h-100">
+        <div class="card mb-3">
+          <div class="card-body">
+            <h5 class="card-title">🏛️ Sector Allocation</h5>
+            <canvas id="sectorChart" height="180"></canvas>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <h5>📊 Portfolio Summary</h5>
+            <p><strong>Total Market Value:</strong> ${{ portfolio_summary.market_value }}</p>
+            <p><strong>Total Invested Capital:</strong> ${{ portfolio_summary.total_cost }}</p>
+            <p>
+              <strong>Unrealised P&amp;L:</strong>
+              <span class="{% if portfolio_summary.pnl >= 0 %}text-success{% else %}text-danger{% endif %}">
+                ${{ portfolio_summary.pnl }}
+              </span>
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- Sector Allocation -->
-  <div class="card mb-4">
-    <div class="card-body">
-      <h5 class="card-title">🏛️ Sector Allocation</h5>
-      <canvas id="sectorChart" height="200"></canvas>
-    </div>
-  </div>
-
-  <!-- Holdings Table -->
   {% if symbols %}
   <div class="card mb-4">
     <div class="card-body">
@@ -75,7 +91,9 @@
             <td>${{ s.current_data.last_price }}</td>
             <td>{{ s.current_shares }}</td>
             <td>${{ s.current_value }}</td>
-            <td><a href="{{ url_for('add_transaction', portfolio_id=portfolio.portfolio_id, symbol_id=s.symbol_id) }}" class="btn btn-sm btn-outline-primary">Add Txn</a></td>
+            <td>
+              <a href="{{ url_for('add_transaction', portfolio_id=portfolio.portfolio_id, symbol_id=s.symbol_id) }}" class="btn btn-sm btn-outline-primary">Add Txn</a>
+            </td>
             <td class="text-center">
               {% if s.transactions %}
               <span class="toggle-transactions" data-target="transactions-{{ s.symbol_id }}" style="cursor: pointer;">
@@ -84,7 +102,6 @@
               {% endif %}
             </td>
           </tr>
-
           {% if s.transactions %}
           <tr id="transactions-{{ s.symbol_id }}" class="transaction-details" style="display: none;">
             <td colspan="7">
@@ -109,10 +126,10 @@
                     <td>${{ txn.transaction_cost }}</td>
                   </tr>
                   {% if txn.transaction_type.lower() == 'buy' %}
-                    {% set summary.total_cost = summary.total_cost + ((txn.shares | float) * (txn.price | float)) + (txn.transaction_cost | float) %}
-                    {% set summary.total_buy = summary.total_buy + (txn.shares | float) %}
+                  {% set summary.total_cost = summary.total_cost + ((txn.shares | float) * (txn.price | float)) + (txn.transaction_cost | float) %}
+                  {% set summary.total_buy = summary.total_buy + (txn.shares | float) %}
                   {% elif txn.transaction_type.lower() == 'sell' %}
-                    {% set summary.total_sell = summary.total_sell + (txn.shares | float) %}
+                  {% set summary.total_sell = summary.total_sell + (txn.shares | float) %}
                   {% endif %}
                   {% endfor %}
                 </tbody>
@@ -139,21 +156,6 @@
   </div>
   {% endif %}
 
-  <!-- Portfolio Summary -->
-  <div class="card">
-    <div class="card-body">
-      <h5>📊 Portfolio Summary</h5>
-      <p><strong>Total Market Value:</strong> ${{ portfolio_summary.market_value }}</p>
-      <p><strong>Total Invested Capital:</strong> ${{ portfolio_summary.total_cost }}</p>
-      <p>
-        <strong>Unrealised P&amp;L:</strong>
-        <span class="{% if portfolio_summary.pnl >= 0 %}text-success{% else %}text-danger{% endif %}">
-          ${{ portfolio_summary.pnl }}
-        </span>
-      </p>
-    </div>
-  </div>
-
   {% if recommendation %}
   <div class="card mt-4">
     <div class="card-body">
@@ -166,11 +168,9 @@
   {% endif %}
 </div>
 
-<!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
   let chartInstance;
-
   function loadChart(period) {
     fetch(`/portfolio/{{ portfolio.portfolio_id }}/performance-data?period=${period}`)
       .then(response => response.json())
@@ -189,21 +189,21 @@
 
         chartInstance = new Chart(ctx, {
           type: 'line',
-          data: {
-            labels: data.labels,
-            datasets: [dataset]
-          },
+          data: { labels: data.labels, datasets: [dataset] },
           options: {
             responsive: true,
             scales: {
-              x: { title: { display: true, text: 'Date' }},
-              y: { title: { display: true, text: showPercentage ? 'Change (%)' : 'Value ($)' }}
+              x: { title: { display: true, text: 'Date' } },
+              y: { title: { display: true, text: showPercentage ? 'Change (%)' : 'Value ($)' } }
             }
           }
         });
       });
   }
+  document.addEventListener("DOMContentLoaded", () => loadChart("1mo"));
+</script>
 
+<script>
   function loadSectorChart() {
     fetch(`/portfolio/{{ portfolio.portfolio_id }}/sector-data`)
       .then(response => response.json())
@@ -241,24 +241,26 @@
       });
   }
 
-  document.addEventListener("DOMContentLoaded", () => {
-    loadChart("1mo");
-    loadSectorChart();
-  });
+  document.addEventListener("DOMContentLoaded", () => loadSectorChart());
+</script>
 
-  window.onload = function () {
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
     const toggles = document.querySelectorAll('.toggle-transactions');
     toggles.forEach(toggle => {
       toggle.addEventListener('click', () => {
         const targetId = toggle.dataset.target;
         const target = document.getElementById(targetId);
         const icon = toggle.querySelector('.toggle-icon');
-        if (target && icon) {
-          target.style.display = target.style.display === 'none' ? 'table-row' : 'none';
-          icon.innerHTML = target.style.display === 'none' ? '&#9660;' : '&#x25B2;';
+        if (target.style.display === 'none') {
+          target.style.display = 'table-row';
+          icon.innerHTML = '&#x25B2;';
+        } else {
+          target.style.display = 'none';
+          icon.innerHTML = '&#9660;';
         }
       });
     });
-  };
+  });
 </script>
 {% endblock %}
