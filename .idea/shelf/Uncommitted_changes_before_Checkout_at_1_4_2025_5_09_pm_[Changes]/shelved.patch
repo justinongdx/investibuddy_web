@@ -1,0 +1,430 @@
+Index: app.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from flask import Flask, render_template, request, redirect, url_for, session, flash\r\nfrom models.database_manager import DatabaseManager, create_database\r\nfrom models.user_manager import UserManager\r\nfrom models.portfolio_manager import PortfolioManager\r\n\r\napp = Flask(__name__)\r\napp.secret_key = 'your_secret_key_here'\r\n\r\n# Initialise database and managers\r\ncreate_database()\r\ndb_manager = DatabaseManager()\r\nuser_manager = UserManager(db_manager)\r\nportfolio_manager = PortfolioManager(db_manager)\r\n\r\n@app.route('/')\r\ndef home():\r\n    return render_template('index.html')\r\n\r\n@app.route('/register', methods=['GET', 'POST'])\r\ndef register():\r\n    if request.method == 'POST':\r\n        username = request.form['username']\r\n        password = request.form['password']\r\n        risk_tolerance = request.form['risk_tolerance']\r\n\r\n        if user_manager.register_user(username, password, risk_tolerance):\r\n            flash('✅ Registration successful! Please log in.')\r\n            return redirect(url_for('login'))\r\n        else:\r\n            flash('❌ Username already exists.')\r\n\r\n    return render_template('register.html')\r\n\r\n@app.route('/login', methods=['GET', 'POST'])\r\ndef login():\r\n    if request.method == 'POST':\r\n        username = request.form['username']\r\n        password = request.form['password']\r\n        user_id = user_manager.login_user(username, password)\r\n\r\n        if user_id:\r\n            session['user_id'] = user_id\r\n            session['username'] = username\r\n            flash(f'\uD83D\uDE0A Welcome back, {username}!')\r\n            return redirect(url_for('dashboard'))\r\n        else:\r\n            flash('❌ Invalid username or password.')\r\n\r\n    return render_template('login.html')\r\n\r\n@app.route('/logout')\r\ndef logout():\r\n    session.clear()\r\n    flash('\uD83D\uDC4B You have been logged out.')\r\n    return redirect(url_for('home'))\r\n\r\n@app.route('/dashboard')\r\ndef dashboard():\r\n    if 'user_id' not in session:\r\n        flash('⚠\uFE0F Please log in to continue.')\r\n        return redirect(url_for('login'))\r\n\r\n    return render_template('dashboard.html', username=session['username'])\r\n\r\n@app.route('/create-portfolio', methods=['GET', 'POST'])\r\ndef create_portfolio():\r\n    if 'user_id' not in session:\r\n        flash(\"⚠\uFE0F Please log in to create a portfolio.\")\r\n        return redirect(url_for('login'))\r\n\r\n    if request.method == 'POST':\r\n        name = request.form['name']\r\n        portfolio_manager.create_portfolio(session['user_id'], name)\r\n        flash(f\"✅ Portfolio '{name}' created successfully!\")\r\n        return redirect(url_for('dashboard'))\r\n\r\n    return render_template('create_portfolio.html')\r\n\r\n@app.route('/view-portfolios')\r\ndef view_portfolios():\r\n    if 'user_id' not in session:\r\n        flash(\"⚠\uFE0F Please log in to view your portfolios.\")\r\n        return redirect(url_for('login'))\r\n\r\n    portfolios = portfolio_manager.get_user_portfolios(session['user_id'])\r\n    return render_template('view_portfolios.html', portfolios=portfolios)\r\n\r\n@app.route('/portfolio/<int:portfolio_id>/add-symbol', methods=['GET', 'POST'])\r\ndef add_symbol(portfolio_id):\r\n    if 'user_id' not in session:\r\n        flash(\"⚠\uFE0F Please log in to add symbols.\")\r\n        return redirect(url_for('login'))\r\n\r\n    rows = db_manager.execute_query(\r\n        \"SELECT portfolio_id, user_id, name FROM portfolios WHERE portfolio_id = ? AND user_id = ?\",\r\n        (portfolio_id, session['user_id'])\r\n    )\r\n\r\n    if not rows:\r\n        flash(\"❌ Portfolio not found or does not belong to you.\")\r\n        return redirect(url_for('view_portfolios'))\r\n\r\n    portfolio = {\r\n        'portfolio_id': rows[0][0],\r\n        'user_id': rows[0][1],\r\n        'name': rows[0][2]\r\n    }\r\n\r\n    if request.method == 'POST':\r\n        ticker = request.form['ticker'].upper().strip()\r\n        data = portfolio_manager.yf.fetch_data(ticker)\r\n\r\n        if \"error\" in data:\r\n            flash(data[\"error\"])\r\n        else:\r\n            sector = data.get(\"sector\", \"Unknown\")\r\n            result = portfolio_manager.add_symbol(portfolio_id, ticker, sector)\r\n            if result:\r\n                flash(f\"✅ Symbol '{ticker}' added to portfolio!\")\r\n                return redirect(url_for('portfolio_detail', portfolio_id=portfolio_id))\r\n            else:\r\n                flash(f\"⚠\uFE0F Symbol '{ticker}' already exists in this portfolio.\")\r\n\r\n    return render_template('add_symbol.html', portfolio=portfolio)\r\n\r\n@app.route('/portfolio/<int:portfolio_id>')\r\ndef portfolio_detail(portfolio_id):\r\n    if 'user_id' not in session:\r\n        flash(\"⚠\uFE0F Please log in to view a portfolio.\")\r\n        return redirect(url_for('login'))\r\n\r\n    rows = db_manager.execute_query(\r\n        \"SELECT portfolio_id, user_id, name FROM portfolios WHERE portfolio_id = ? AND user_id = ?\",\r\n        (portfolio_id, session['user_id'])\r\n    )\r\n\r\n    if not rows:\r\n        flash(\"❌ Portfolio not found or does not belong to you.\")\r\n        return redirect(url_for('view_portfolios'))\r\n\r\n    portfolio = {\r\n        'portfolio_id': rows[0][0],\r\n        'user_id': rows[0][1],\r\n        'name': rows[0][2]\r\n    }\r\n\r\n    symbols = portfolio_manager.get_portfolio_symbols(portfolio_id)\r\n\r\n    total_market_value = 0\r\n    total_cost_all = 0\r\n\r\n    for s in symbols:\r\n        total_shares = 0\r\n        total_cost = 0\r\n        transactions = s.transactions if hasattr(s, 'transactions') and s.transactions else []\r\n\r\n        for txn in transactions:\r\n            try:\r\n                shares = float(txn.shares)\r\n                price = float(txn.price)\r\n                if txn.transaction_type == 'Buy':\r\n                    total_shares += shares\r\n                    total_cost += shares * price\r\n                elif txn.transaction_type == 'Sell':\r\n                    total_shares -= shares\r\n            except ValueError:\r\n                flash(f\"❌ Invalid transaction: shares='{txn.shares}', price='{txn.price}' for symbol {s.ticker}\")\r\n                continue\r\n\r\n        last_price = s.current_data.get('last_price', 0) if s.current_data else 0\r\n        s.current_shares = total_shares\r\n        s.current_value = round(total_shares * last_price, 2) if total_shares > 0 else 0\r\n\r\n        total_market_value += s.current_value\r\n        total_cost_all += total_cost\r\n\r\n    portfolio_summary = {\r\n        'market_value': round(total_market_value, 2),\r\n        'total_cost': round(total_cost_all, 2),\r\n        'pnl': round(total_market_value - total_cost_all, 2)\r\n    }\r\n\r\n    return render_template('portfolio_detail.html', portfolio=portfolio, symbols=symbols, portfolio_summary=portfolio_summary)\r\n\r\n@app.route('/portfolio/<int:portfolio_id>/symbol/<int:symbol_id>/add-transaction', methods=['GET', 'POST'])\r\ndef add_transaction(portfolio_id, symbol_id):\r\n    if 'user_id' not in session:\r\n        flash(\"⚠\uFE0F Please log in to add transactions.\")\r\n        return redirect(url_for('login'))\r\n\r\n    symbol = portfolio_manager.get_symbol_by_id(symbol_id)\r\n\r\n    if not symbol or symbol.portfolio_id != portfolio_id:\r\n        flash(\"❌ Symbol not found or does not belong to this portfolio.\")\r\n        return redirect(url_for('portfolio_detail', portfolio_id=portfolio_id))\r\n\r\n    if request.method == 'POST':\r\n        txn_type = request.form['transaction_type']\r\n        txn_date = request.form['transaction_date']\r\n        shares = float(request.form['shares'])\r\n        price_str = request.form['price'].strip()\r\n        price = float(price_str) if price_str else symbol.current_data['last_price']\r\n        cost = float(request.form['transaction_cost'])\r\n\r\n        portfolio_manager.add_transaction(symbol_id, txn_type, shares, price, cost, txn_date)\r\n        flash(f\"{txn_type} transaction for {shares} shares of {symbol.ticker} added!\")\r\n        return redirect(url_for('portfolio_detail', portfolio_id=portfolio_id))\r\n\r\n    return render_template('add_transaction.html', symbol=symbol, portfolio_id=portfolio_id)\r\n\r\n\r\nif __name__ == '__main__':\r\n    app.run(debug=True)\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app.py b/app.py
+--- a/app.py	(revision 625ec66c61174698b1c02ea45628c0a7dc363813)
++++ b/app.py	(date 1743498307521)
+@@ -1,8 +1,10 @@
+-from flask import Flask, render_template, request, redirect, url_for, session, flash
++from flask import Flask, render_template, request, redirect, url_for, session, flash, send_file
+ from models.database_manager import DatabaseManager, create_database
+ from models.user_manager import UserManager
+ from models.portfolio_manager import PortfolioManager
+-
++from io import BytesIO
++import pandas as pd
++import datetime
+ app = Flask(__name__)
+ app.secret_key = 'your_secret_key_here'
+ 
+@@ -202,13 +204,89 @@
+         price = float(price_str) if price_str else symbol.current_data['last_price']
+         cost = float(request.form['transaction_cost'])
+ 
++        # Date cannot be a future date
++        try:
++            txn_date_obj = datetime.datetime.strptime(txn_date, '%Y-%m-%d').date()
++            if txn_date_obj > datetime.date.today():
++                flash("❌ Transaction date cannot be in the future.")
++                return redirect(url_for('add_transaction', portfolio_id=portfolio_id, symbol_id=symbol_id))
++        except ValueError:
++            flash("❌ Invalid date format. Please use YYYY-MM-DD.")
++            return redirect(url_for('add_transaction', portfolio_id=portfolio_id, symbol_id=symbol_id))
++
++        # Prevent selling more shares than currently owned
++        total_bought = sum(txn.shares for txn in symbol.transactions if txn.transaction_type.lower() == 'buy')
++        total_sold = sum(txn.shares for txn in symbol.transactions if txn.transaction_type.lower() == 'sell')
++        current_shares = total_bought - total_sold
++
++        if txn_type.lower() == 'sell' and shares > current_shares:
++            flash(f"❌ Cannot sell {shares} shares. You only own {current_shares} shares.")
++            return redirect(url_for('add_transaction', portfolio_id=portfolio_id, symbol_id=symbol_id))
++
++        # Proceed to save transaction
+         portfolio_manager.add_transaction(symbol_id, txn_type, shares, price, cost, txn_date)
+         flash(f"{txn_type} transaction for {shares} shares of {symbol.ticker} added!")
+         return redirect(url_for('portfolio_detail', portfolio_id=portfolio_id))
+ 
+     return render_template('add_transaction.html', symbol=symbol, portfolio_id=portfolio_id)
+ 
++@app.route('/portfolio/<int:portfolio_id>/sector-exposure')
++def sector_exposure(portfolio_id):
++    if 'user_id' not in session:
++        flash("⚠️ Please log in to view sector exposure.")
++        return redirect(url_for('login'))
++
++    rows = db_manager.execute_query(
++        "SELECT portfolio_id FROM portfolios WHERE portfolio_id = ? AND user_id = ?",
++        (portfolio_id, session['user_id'])
++    )
++
++    if not rows:
++        flash("❌ Portfolio not found or does not belong to you.")
++        return redirect(url_for('view_portfolios'))
++
++    portfolio = {
++        'portfolio_id': portfolio_id,
++        'name': rows[0][0]
++    }
++
++    exposure = portfolio_manager.calculate_sector_exposure(portfolio_id)
++    return render_template('sector_exposure.html', portfolio=portfolio, portfolio_id=portfolio_id, sector_exposure=exposure)
++
++
++@app.route('/portfolio/<int:portfolio_id>/export')
++def export_portfolio_excel(portfolio_id):
++    symbols = portfolio_manager.get_portfolio_symbols(portfolio_id)
++
++    data = []
++    for s in symbols:
++        metrics = portfolio_manager.calculate_symbol_metrics(s)
++        data.append({
++            "Ticker": metrics["ticker"],
++            "Sector": metrics["sector"],
++            "Current Price": metrics["current_price"],
++            "Avg Cost": metrics["avg_cost"],
++            "Shares": metrics["current_shares"],
++            "Investment": metrics["total_investment"],
++            "Current Value": metrics["current_value"],
++            "Unrealised P/L": metrics["unrealised_pl"],
++            "Unrealised P/L %": metrics["unrealised_pl_percent"],
++            "Day Change": metrics["day_change"],
++            "Day Change %": metrics["day_change_percent"]
++        })
++
++    df = pd.DataFrame(data)
++    output = BytesIO()
++    with pd.ExcelWriter(output, engine='openpyxl') as writer:
++        df.to_excel(writer, index=False, sheet_name='Portfolio')
++
++    output.seek(0)
++    return send_file(
++        output,
++        as_attachment=True,
++        download_name=f'portfolio_{portfolio_id}.xlsx',
++        mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
++    )
+ 
+ if __name__ == '__main__':
+     app.run(debug=True)
+-
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"e1a8e9de-b7af-4b2f-b553-27f796069872\" name=\"Changes\" comment=\"added an arrow to show/hide transactions under each ticker.\" />\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"FileTemplateManagerImpl\">\r\n    <option name=\"RECENT_TEMPLATES\">\r\n      <list>\r\n        <option value=\"Flask Main\" />\r\n        <option value=\"Python Script\" />\r\n        <option value=\"HTML File\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"FlaskConsoleOptions\" custom-start-script=\"import sys; print('Python %s on %s' % (sys.version, sys.platform)); sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;from flask.cli import ScriptInfo, NoAppException&#10;for module in [&quot;main.py&quot;, &quot;wsgi.py&quot;, &quot;app.py&quot;]:&#10;    try: locals().update(ScriptInfo(app_import_path=module, create_app=None).load_app().make_shell_context()); print(&quot;\\nFlask App: %s&quot; % app.import_name); break&#10;    except NoAppException: pass\">\r\n    <envs>\r\n      <env key=\"FLASK_APP\" value=\"app\" />\r\n    </envs>\r\n    <option name=\"myCustomStartScript\" value=\"import sys; print('Python %s on %s' % (sys.version, sys.platform)); sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;from flask.cli import ScriptInfo, NoAppException&#10;for module in [&quot;main.py&quot;, &quot;wsgi.py&quot;, &quot;app.py&quot;]:&#10;    try: locals().update(ScriptInfo(app_import_path=module, create_app=None).load_app().make_shell_context()); print(&quot;\\nFlask App: %s&quot; % app.import_name); break&#10;    except NoAppException: pass\" />\r\n    <option name=\"myEnvs\">\r\n      <map>\r\n        <entry key=\"FLASK_APP\" value=\"app\" />\r\n      </map>\r\n    </option>\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"GitHubPullRequestSearchHistory\"><![CDATA[{\r\n  \"lastFilter\": {\r\n    \"state\": \"OPEN\",\r\n    \"assignee\": \"anthonykhj\"\r\n  }\r\n}]]></component>\r\n  <component name=\"GithubPullRequestsUISettings\"><![CDATA[{\r\n  \"selectedUrlAndAccountId\": {\r\n    \"url\": \"https://github.com/justinongdx/investibuddy_web.git\",\r\n    \"accountId\": \"16c65ed8-d15e-4890-8f5d-ab21180d0090\"\r\n  }\r\n}]]></component>\r\n  <component name=\"ProjectColorInfo\">{\r\n  &quot;associatedIndex&quot;: 0\r\n}</component>\r\n  <component name=\"ProjectId\" id=\"2und7xYRz6h43MEmsveUrhRRzK2\" />\r\n  <component name=\"ProjectLevelVcsManager\" settingsEditedManually=\"true\">\r\n    <ConfirmationsSetting value=\"2\" id=\"Add\" />\r\n  </component>\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\"><![CDATA[{\r\n  \"keyToString\": {\r\n    \"DefaultHtmlFileTemplate\": \"HTML File\",\r\n    \"Flask server.investibuddy_web.executor\": \"Run\",\r\n    \"RunOnceActivity.ShowReadmeOnStart\": \"true\",\r\n    \"RunOnceActivity.git.unshallow\": \"true\",\r\n    \"git-widget-placeholder\": \"master\",\r\n    \"ignore.virus.scanning.warn.message\": \"true\",\r\n    \"node.js.detected.package.eslint\": \"true\",\r\n    \"node.js.detected.package.tslint\": \"true\",\r\n    \"node.js.selected.package.eslint\": \"(autodetect)\",\r\n    \"node.js.selected.package.tslint\": \"(autodetect)\",\r\n    \"nodejs_package_manager_path\": \"npm\",\r\n    \"settings.editor.selected.configurable\": \"com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable\",\r\n    \"vue.rearranger.settings.migration\": \"true\"\r\n  }\r\n}]]></component>\r\n  <component name=\"RunManager\">\r\n    <configuration name=\"investibuddy_web\" type=\"Python.FlaskServer\">\r\n      <option name=\"flaskDebug\" value=\"true\" />\r\n      <module name=\"investibuddy_web\" />\r\n      <option name=\"target\" value=\"$PROJECT_DIR$/app.py\" />\r\n      <option name=\"targetType\" value=\"PATH\" />\r\n      <option name=\"ENV_FILES\" value=\"\" />\r\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\r\n      <option name=\"PARENT_ENVS\" value=\"true\" />\r\n      <option name=\"SDK_HOME\" value=\"\" />\r\n      <option name=\"WORKING_DIRECTORY\" value=\"\" />\r\n      <option name=\"IS_MODULE_SDK\" value=\"true\" />\r\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\r\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\r\n      <EXTENSION ID=\"PythonCoverageRunConfigurationExtension\" runner=\"coverage.py\" />\r\n      <option name=\"launchJavascriptDebuger\" value=\"false\" />\r\n      <method v=\"2\" />\r\n    </configuration>\r\n  </component>\r\n  <component name=\"SharedIndexes\">\r\n    <attachedChunks>\r\n      <set>\r\n        <option value=\"bundled-js-predefined-d6986cc7102b-76f8388c3a79-JavaScript-PY-243.24978.54\" />\r\n        <option value=\"bundled-python-sdk-91e3b7efe1d4-466328ff949b-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-243.24978.54\" />\r\n      </set>\r\n    </attachedChunks>\r\n  </component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"e1a8e9de-b7af-4b2f-b553-27f796069872\" name=\"Changes\" comment=\"\" />\r\n      <created>1742888108861</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1742888108861</updated>\r\n      <workItem from=\"1742888109912\" duration=\"11168000\" />\r\n      <workItem from=\"1743258247719\" duration=\"6912000\" />\r\n    </task>\r\n    <task id=\"LOCAL-00001\" summary=\"added an arrow to show/hide transactions under each ticker.\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1743263747780</created>\r\n      <option name=\"number\" value=\"00001\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1743263747780</updated>\r\n    </task>\r\n    <option name=\"localTasksCounter\" value=\"2\" />\r\n    <servers />\r\n  </component>\r\n  <component name=\"TypeScriptGeneratedFilesManager\">\r\n    <option name=\"version\" value=\"3\" />\r\n  </component>\r\n  <component name=\"VcsManagerConfiguration\">\r\n    <MESSAGE value=\"added an arrow to show/hide transactions under each ticker.\" />\r\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"added an arrow to show/hide transactions under each ticker.\" />\r\n  </component>\r\n  <component name=\"com.intellij.coverage.CoverageDataManagerImpl\">\r\n    <SUITE FILE_PATH=\"coverage/investibuddy_web$investibuddy_web.coverage\" NAME=\"investibuddy_web Coverage Results\" MODIFIED=\"1743258700496\" SOURCE_PROVIDER=\"com.intellij.coverage.DefaultCoverageFileProvider\" RUNNER=\"coverage.py\" COVERAGE_BY_TEST_ENABLED=\"false\" COVERAGE_TRACING_ENABLED=\"false\" WORKING_DIRECTORY=\"\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 625ec66c61174698b1c02ea45628c0a7dc363813)
++++ b/.idea/workspace.xml	(date 1743498347082)
+@@ -4,7 +4,11 @@
+     <option name="autoReloadType" value="SELECTIVE" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="e1a8e9de-b7af-4b2f-b553-27f796069872" name="Changes" comment="added an arrow to show/hide transactions under each ticker." />
++    <list default="true" id="e1a8e9de-b7af-4b2f-b553-27f796069872" name="Changes" comment="Added sector exposure and export into pdf">
++      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/templates/portfolio_detail.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/portfolio_detail.html" afterDir="false" />
++    </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+@@ -31,20 +35,25 @@
+     </option>
+   </component>
+   <component name="Git.Settings">
++    <option name="RECENT_BRANCH_BY_REPOSITORY">
++      <map>
++        <entry key="$PROJECT_DIR$" value="lisa" />
++      </map>
++    </option>
+     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+   </component>
+-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+-  "lastFilter": {
+-    "state": "OPEN",
+-    "assignee": "anthonykhj"
++  <component name="GitHubPullRequestSearchHistory">{
++  &quot;lastFilter&quot;: {
++    &quot;state&quot;: &quot;OPEN&quot;,
++    &quot;assignee&quot;: &quot;anthonykhj&quot;
+   }
+-}]]></component>
+-  <component name="GithubPullRequestsUISettings"><![CDATA[{
+-  "selectedUrlAndAccountId": {
+-    "url": "https://github.com/justinongdx/investibuddy_web.git",
+-    "accountId": "16c65ed8-d15e-4890-8f5d-ab21180d0090"
++}</component>
++  <component name="GithubPullRequestsUISettings">{
++  &quot;selectedUrlAndAccountId&quot;: {
++    &quot;url&quot;: &quot;https://github.com/lisalim14/investibuddy_web&quot;,
++    &quot;accountId&quot;: &quot;886b3fa5-21ae-41e0-922b-e4d773e9b0ba&quot;
+   }
+-}]]></component>
++}</component>
+   <component name="ProjectColorInfo">{
+   &quot;associatedIndex&quot;: 0
+ }</component>
+@@ -59,6 +68,7 @@
+   <component name="PropertiesComponent"><![CDATA[{
+   "keyToString": {
+     "DefaultHtmlFileTemplate": "HTML File",
++    "Flask server.Flask (app.py).executor": "Run",
+     "Flask server.investibuddy_web.executor": "Run",
+     "RunOnceActivity.ShowReadmeOnStart": "true",
+     "RunOnceActivity.git.unshallow": "true",
+@@ -95,8 +105,8 @@
+   <component name="SharedIndexes">
+     <attachedChunks>
+       <set>
+-        <option value="bundled-js-predefined-d6986cc7102b-76f8388c3a79-JavaScript-PY-243.24978.54" />
+-        <option value="bundled-python-sdk-91e3b7efe1d4-466328ff949b-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-243.24978.54" />
++        <option value="bundled-js-predefined-d6986cc7102b-deb605915726-JavaScript-PY-243.22562.220" />
++        <option value="bundled-python-sdk-0fc6c617c4bd-9a18a617cbe4-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-243.22562.220" />
+       </set>
+     </attachedChunks>
+   </component>
+@@ -110,6 +120,7 @@
+       <updated>1742888108861</updated>
+       <workItem from="1742888109912" duration="11168000" />
+       <workItem from="1743258247719" duration="6912000" />
++      <workItem from="1743298628157" duration="3409000" />
+     </task>
+     <task id="LOCAL-00001" summary="added an arrow to show/hide transactions under each ticker.">
+       <option name="closed" value="true" />
+@@ -119,7 +130,15 @@
+       <option name="project" value="LOCAL" />
+       <updated>1743263747780</updated>
+     </task>
+-    <option name="localTasksCounter" value="2" />
++    <task id="LOCAL-00002" summary="Added sector exposure and export into pdf">
++      <option name="closed" value="true" />
++      <created>1743299893761</created>
++      <option name="number" value="00002" />
++      <option name="presentableId" value="LOCAL-00002" />
++      <option name="project" value="LOCAL" />
++      <updated>1743299893762</updated>
++    </task>
++    <option name="localTasksCounter" value="3" />
+     <servers />
+   </component>
+   <component name="TypeScriptGeneratedFilesManager">
+@@ -127,9 +146,11 @@
+   </component>
+   <component name="VcsManagerConfiguration">
+     <MESSAGE value="added an arrow to show/hide transactions under each ticker." />
+-    <option name="LAST_COMMIT_MESSAGE" value="added an arrow to show/hide transactions under each ticker." />
++    <MESSAGE value="Added sector exposure and export into pdf" />
++    <option name="LAST_COMMIT_MESSAGE" value="Added sector exposure and export into pdf" />
+   </component>
+   <component name="com.intellij.coverage.CoverageDataManagerImpl">
+-    <SUITE FILE_PATH="coverage/investibuddy_web$investibuddy_web.coverage" NAME="investibuddy_web Coverage Results" MODIFIED="1743258700496" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
++    <SUITE FILE_PATH="coverage/investibuddy_web$investibuddy_web.coverage" NAME="investibuddy_web Coverage Results" MODIFIED="1743301901801" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
++    <SUITE FILE_PATH="coverage/investibuddy_web$Flask__app_py_.coverage" NAME="Flask (app.py) Coverage Results" MODIFIED="1743299552042" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+   </component>
+ </project>
+\ No newline at end of file
+Index: templates/portfolio_detail.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{% extends 'layout.html' %}\r\n\r\n{% block title %}{{ portfolio.name }} - Portfolio Details{% endblock %}\r\n\r\n{% block content %}\r\n<h2 class=\"mb-3\">\uD83D\uDCC8 {{ portfolio.name }}</h2>\r\n<p class=\"text-muted\">Portfolio ID: {{ portfolio.portfolio_id }}</p>\r\n\r\n<a href=\"{{ url_for('add_symbol', portfolio_id=portfolio.portfolio_id) }}\" class=\"btn btn-success mb-4\">➕ Add Symbol</a>\r\n\r\n{% if symbols %}\r\n    <table class=\"table table-striped\">\r\n        <thead class=\"table-dark\">\r\n            <tr>\r\n                <th>Ticker</th>\r\n                <th>Sector</th>\r\n                <th>Current Price</th>\r\n                <th>Shares</th>\r\n                <th>Current Value</th>\r\n                <th>Actions</th>\r\n                <th></th>\r\n            </tr>\r\n        </thead>\r\n        <tbody>\r\n            {% for s in symbols %}\r\n            <tr>\r\n                <td>{{ s.ticker }}</td>\r\n                <td>{{ s.sector }}</td>\r\n                <td>${{ s.current_data.last_price }}</td>\r\n                <td>{{ s.current_shares }}</td>\r\n                <td>${{ s.current_value }}</td>\r\n                <td>\r\n                    <a href=\"{{ url_for('add_transaction', portfolio_id=portfolio.portfolio_id, symbol_id=s.symbol_id) }}\" class=\"btn btn-sm btn-outline-primary\">Add Txn</a>\r\n                </td>\r\n                <td class=\"text-center\">\r\n                    {% if s.transactions %}\r\n                    <span class=\"toggle-transactions\" data-target=\"transactions-{{ s.symbol_id }}\" style=\"cursor: pointer;\">\r\n                        <span class=\"toggle-icon\">&#9660;</span>\r\n                    </span>\r\n                    {% endif %}\r\n                </td>\r\n            </tr>\r\n            {% if s.transactions %}\r\n            <tr id=\"transactions-{{ s.symbol_id }}\" class=\"transaction-details\" style=\"display: none;\">\r\n                <td colspan=\"7\">\r\n                    <table class=\"table table-bordered mt-2 mb-0\">\r\n                        <thead class=\"table-light\">\r\n                            <tr>\r\n                                <th>Date</th>\r\n                                <th>Type</th>\r\n                                <th>Shares</th>\r\n                                <th>Price</th>\r\n                                <th>Cost</th>\r\n                            </tr>\r\n                        </thead>\r\n                        <tbody>\r\n                            {% set total_cost = 0 %}\r\n                            {% set total_buy = 0 %}\r\n                            {% set total_sell = 0 %}\r\n                            {% for txn in s.transactions %}\r\n                            <tr>\r\n                                <td>{{ txn.transaction_date }}</td>\r\n                                <td>{{ txn.transaction_type }}</td>\r\n                                <td>{{ txn.shares }}</td>\r\n                                <td>${{ txn.price }}</td>\r\n                                <td>${{ txn.transaction_cost }}</td>\r\n                            </tr>\r\n                            {% if txn.transaction_type == 'Buy' %}\r\n                                {% set total_cost = total_cost + ((txn.shares | float) * (txn.price | float) + (txn.transaction_cost | float)) %}\r\n                               {% set total_buy = total_buy + (txn.shares | float) %}\r\n                            {% elif txn.transaction_type == 'Sell' %}\r\n                                {% set total_sell = total_sell + (txn.shares | float) %}\r\n                            {% endif %}\r\n                            {% endfor %}\r\n                        </tbody>\r\n                        <tfoot class=\"table-secondary\">\r\n                            <tr>\r\n                                <td colspan=\"5\">\r\n                                    <strong>Summary:</strong>\r\n                                    Bought: {{ total_buy }} shares,\r\n                                    Sold: {{ total_sell }} shares,\r\n                                    Avg Cost/Share:\r\n                                    {% if total_buy > 0 %}${{ (total_cost / total_buy) | round(2) }}{% else %}-{% endif %},\r\n                                    Total Cost: ${{ total_cost | round(2) }}\r\n                                </td>\r\n                            </tr>\r\n                        </tfoot>\r\n                    </table>\r\n                </td>\r\n            </tr>\r\n            {% endif %}\r\n            {% endfor %}\r\n        </tbody>\r\n    </table>\r\n\r\n    <style>\r\n    .toggle-transactions {\r\n        display: inline-block;\r\n        width: 20px;\r\n        height: 20px;\r\n        text-align: center;\r\n        line-height: 20px;\r\n    }\r\n\r\n    .transaction-details {\r\n        background-color: #f8f9fa;\r\n    }\r\n\r\n    /* Add a subtle animation to the arrow */\r\n    .toggle-icon {\r\n        display: inline-block;\r\n        transition: transform 0.3s ease;\r\n    }\r\n\r\n    /* Remove bottom border of the row above the expanded transactions */\r\n    tr:has(+ tr.transaction-details:not([style*=\"display: none\"])) {\r\n        border-bottom: none;\r\n    }\r\n    </style>\r\n\r\n    <script>\r\n    document.addEventListener('DOMContentLoaded', function() {\r\n        const toggleElements = document.querySelectorAll('.toggle-transactions');\r\n\r\n        toggleElements.forEach(function(element) {\r\n            element.addEventListener('click', function() {\r\n                const targetId = this.getAttribute('data-target');\r\n                const targetRow = document.getElementById(targetId);\r\n                const icon = this.querySelector('.toggle-icon');\r\n\r\n                if (targetRow.style.display === 'none') {\r\n                    targetRow.style.display = 'table-row';\r\n                    icon.innerHTML = '&#x25B2;';\r\n                    icon.style.transform = 'rotate(0deg)';\r\n                } else {\r\n                    targetRow.style.display = 'none';\r\n                    icon.innerHTML = '&#9660;';\r\n                    icon.style.transform = 'rotate(0deg)';\r\n                }\r\n            });\r\n        });\r\n    });\r\n    </script>\r\n\r\n{% else %}\r\n    <div class=\"alert alert-info\">This portfolio has no stocks yet. Use the button above to add one.</div>\r\n{% endif %}\r\n<hr class=\"my-4\">\r\n<h4>\uD83D\uDCCA Portfolio Summary</h4>\r\n<p><strong>Total Market Value:</strong> ${{ portfolio_summary.market_value }}</p>\r\n<p><strong>Total Invested Capital:</strong> ${{ portfolio_summary.total_cost }}</p>\r\n<p><strong>Unrealised P&amp;L:</strong> ${{ portfolio_summary.pnl }}</p>\r\n{% endblock %}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/templates/portfolio_detail.html b/templates/portfolio_detail.html
+--- a/templates/portfolio_detail.html	(revision 625ec66c61174698b1c02ea45628c0a7dc363813)
++++ b/templates/portfolio_detail.html	(date 1743498310032)
+@@ -2,96 +2,104 @@
+ 
+ {% block title %}{{ portfolio.name }} - Portfolio Details{% endblock %}
+ 
++
+ {% block content %}
++
+ <h2 class="mb-3">📈 {{ portfolio.name }}</h2>
+ <p class="text-muted">Portfolio ID: {{ portfolio.portfolio_id }}</p>
+ 
+ <a href="{{ url_for('add_symbol', portfolio_id=portfolio.portfolio_id) }}" class="btn btn-success mb-4">➕ Add Symbol</a>
++<a href="{{ url_for('export_portfolio_excel', portfolio_id=portfolio.portfolio_id) }}" class="btn btn-outline-secondary mb-4 ms-2">
++  📥 Export to Excel
++</a>
++<a href="{{ url_for('sector_exposure', portfolio_id=portfolio.portfolio_id) }}" class="btn btn-info mb-4 ms-2">
++  🧭 View Sector Exposure
++</a>
+ 
+ {% if symbols %}
+-    <table class="table table-striped">
+-        <thead class="table-dark">
+-            <tr>
+-                <th>Ticker</th>
+-                <th>Sector</th>
+-                <th>Current Price</th>
+-                <th>Shares</th>
+-                <th>Current Value</th>
+-                <th>Actions</th>
+-                <th></th>
+-            </tr>
+-        </thead>
+-        <tbody>
+-            {% for s in symbols %}
+-            <tr>
+-                <td>{{ s.ticker }}</td>
+-                <td>{{ s.sector }}</td>
+-                <td>${{ s.current_data.last_price }}</td>
+-                <td>{{ s.current_shares }}</td>
+-                <td>${{ s.current_value }}</td>
+-                <td>
+-                    <a href="{{ url_for('add_transaction', portfolio_id=portfolio.portfolio_id, symbol_id=s.symbol_id) }}" class="btn btn-sm btn-outline-primary">Add Txn</a>
+-                </td>
+-                <td class="text-center">
+-                    {% if s.transactions %}
+-                    <span class="toggle-transactions" data-target="transactions-{{ s.symbol_id }}" style="cursor: pointer;">
+-                        <span class="toggle-icon">&#9660;</span>
+-                    </span>
+-                    {% endif %}
+-                </td>
+-            </tr>
+-            {% if s.transactions %}
+-            <tr id="transactions-{{ s.symbol_id }}" class="transaction-details" style="display: none;">
+-                <td colspan="7">
+-                    <table class="table table-bordered mt-2 mb-0">
+-                        <thead class="table-light">
+-                            <tr>
+-                                <th>Date</th>
+-                                <th>Type</th>
+-                                <th>Shares</th>
+-                                <th>Price</th>
+-                                <th>Cost</th>
+-                            </tr>
+-                        </thead>
+-                        <tbody>
+-                            {% set total_cost = 0 %}
+-                            {% set total_buy = 0 %}
+-                            {% set total_sell = 0 %}
+-                            {% for txn in s.transactions %}
+-                            <tr>
+-                                <td>{{ txn.transaction_date }}</td>
+-                                <td>{{ txn.transaction_type }}</td>
+-                                <td>{{ txn.shares }}</td>
+-                                <td>${{ txn.price }}</td>
+-                                <td>${{ txn.transaction_cost }}</td>
+-                            </tr>
+-                            {% if txn.transaction_type == 'Buy' %}
+-                                {% set total_cost = total_cost + ((txn.shares | float) * (txn.price | float) + (txn.transaction_cost | float)) %}
+-                               {% set total_buy = total_buy + (txn.shares | float) %}
+-                            {% elif txn.transaction_type == 'Sell' %}
+-                                {% set total_sell = total_sell + (txn.shares | float) %}
+-                            {% endif %}
+-                            {% endfor %}
+-                        </tbody>
+-                        <tfoot class="table-secondary">
+-                            <tr>
+-                                <td colspan="5">
+-                                    <strong>Summary:</strong>
+-                                    Bought: {{ total_buy }} shares,
+-                                    Sold: {{ total_sell }} shares,
+-                                    Avg Cost/Share:
+-                                    {% if total_buy > 0 %}${{ (total_cost / total_buy) | round(2) }}{% else %}-{% endif %},
+-                                    Total Cost: ${{ total_cost | round(2) }}
+-                                </td>
+-                            </tr>
+-                        </tfoot>
+-                    </table>
+-                </td>
+-            </tr>
+-            {% endif %}
+-            {% endfor %}
+-        </tbody>
+-    </table>
++<table class="table table-striped">
++    <thead class="table-dark">
++        <tr>
++            <th>Ticker</th>
++            <th>Sector</th>
++            <th>Current Price</th>
++            <th>Shares</th>
++            <th>Current Value</th>
++            <th>Actions</th>
++            <th></th>
++        </tr>
++    </thead>
++    <tbody>
++        {% for s in symbols %}
++        <tr>
++            <td>{{ s.ticker }}</td>
++            <td>{{ s.sector }}</td>
++            <td>${{ s.current_data.last_price }}</td>
++            <td>{{ s.current_shares }}</td>
++            <td>${{ s.current_value }}</td>
++            <td>
++                <a href="{{ url_for('add_transaction', portfolio_id=portfolio.portfolio_id, symbol_id=s.symbol_id) }}" class="btn btn-sm btn-outline-primary">Add Txn</a>
++            </td>
++            <td class="text-center">
++                {% if s.transactions %}
++                <span class="toggle-transactions" data-target="transactions-{{ s.symbol_id }}" style="cursor: pointer;">
++                    <span class="toggle-icon">&#9660;</span>
++                </span>
++                {% endif %}
++            </td>
++        </tr>
++        {% if s.transactions %}
++        <tr id="transactions-{{ s.symbol_id }}" class="transaction-details" style="display: none;">
++            <td colspan="7">
++                <table class="table table-bordered mt-2 mb-0">
++                    <thead class="table-light">
++                        <tr>
++                            <th>Date</th>
++                            <th>Type</th>
++                            <th>Shares</th>
++                            <th>Price</th>
++                            <th>Cost</th>
++                        </tr>
++                    </thead>
++                    <tbody>
++                        {% set summary = namespace(total_cost=0, total_buy=0, total_sell=0) %}
++                        {% for txn in s.transactions %}
++                        <tr>
++                            <td>{{ txn.transaction_date }}</td>
++                            <td>{{ txn.transaction_type }}</td>
++                            <td>{{ txn.shares }}</td>
++                            <td>${{ txn.price }}</td>
++                            <td>${{ txn.transaction_cost }}</td>
++                        </tr>
++
++                        {% if txn.transaction_type.lower() == 'buy' %}
++                            {% set summary.total_cost = summary.total_cost + ((txn.shares | float) * (txn.price | float)) + (txn.transaction_cost | float) %}
++                            {% set summary.total_buy = summary.total_buy + (txn.shares | float) %}
++                        {% elif txn.transaction_type.lower() == 'sell' %}
++                            {% set summary.total_sell = summary.total_sell + (txn.shares | float) %}
++                        {% endif %}
++                        {% endfor %}
++                    </tbody>
++                    <tfoot class="table-secondary">
++                        <tr>
++                            <td colspan="5">
++                                <strong>Summary:</strong>
++                                Bought: {{ summary.total_buy }} shares,
++                                Sold: {{ summary.total_sell }} shares,
++                                Avg Cost/Share:
++                                {% if summary.total_buy > 0 %}${{ (summary.total_cost / summary.total_buy) | round(2) }}{% else %}-{% endif %},
++                                Total Cost: ${{ summary.total_cost | round(2) }}
++
++                            </td>
++                        </tr>
++                    </tfoot>
++                </table>
++            </td>
++        </tr>
++        {% endif %}
++        {% endfor %}
++    </tbody>
++</table>
+ 
+     <style>
+     .toggle-transactions {
