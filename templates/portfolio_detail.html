@@ -3,9 +3,9 @@
 {% block title %}{{ portfolio.name }} - Portfolio Details{% endblock %}
 
 {% block content %}
-
 <div class="container mt-5 mb-5">
 
+  <!-- Header -->
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
       <h2 class="fw-bold mb-0"><i class="bi bi-bar-chart-line-fill me-2"></i>{{ portfolio.name }}</h2>
@@ -14,35 +14,43 @@
     <div>
       <a href="{{ url_for('add_symbol', portfolio_id=portfolio.portfolio_id) }}" class="btn btn-success me-2">➕ Add Symbol</a>
       <a href="{{ url_for('export_portfolio_excel', portfolio_id=portfolio.portfolio_id) }}" class="btn btn-outline-secondary me-2">📥 Export to Excel</a>
-      <a href="{{ url_for('sector_exposure', portfolio_id=portfolio.portfolio_id) }}" class="btn btn-info me-2">🧭 View Sector Exposure</a>
       <a href="{{ url_for('recommendations', portfolio_id=portfolio.portfolio_id) }}" class="btn btn-warning">🤖 Gemini Recommendations</a>
     </div>
   </div>
 
+  <!-- Portfolio Performance -->
   <div class="card mb-4">
     <div class="card-body">
       <h5 class="card-title mb-3">📉 Portfolio Performance</h5>
       <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-3">
-          <div class="d-flex justify-content-center w-100 mb-2 mb-md-0">
-              <div class="btn-group" role="group">
-                  <button class="btn btn-sm btn-outline-primary" onclick="loadChart('1d')">1D</button>
-                  <button class="btn btn-sm btn-outline-primary" onclick="loadChart('5d')">1W</button>
-                  <button class="btn btn-sm btn-outline-primary" onclick="loadChart('1mo')">1M</button>
-                  <button class="btn btn-sm btn-outline-primary" onclick="loadChart('ytd')">YTD</button>
-                  <button class="btn btn-sm btn-outline-primary" onclick="loadChart('1y')">1Y</button>
-                  <button class="btn btn-sm btn-outline-primary" onclick="loadChart('max')">Max</button>
-              </div>
+        <div class="d-flex justify-content-center w-100 mb-2 mb-md-0">
+          <div class="btn-group" role="group">
+            <button class="btn btn-sm btn-outline-primary" onclick="loadChart('1d')">1D</button>
+            <button class="btn btn-sm btn-outline-primary" onclick="loadChart('5d')">1W</button>
+            <button class="btn btn-sm btn-outline-primary" onclick="loadChart('1mo')">1M</button>
+            <button class="btn btn-sm btn-outline-primary" onclick="loadChart('ytd')">YTD</button>
+            <button class="btn btn-sm btn-outline-primary" onclick="loadChart('1y')">1Y</button>
+            <button class="btn btn-sm btn-outline-primary" onclick="loadChart('max')">Max</button>
           </div>
-          <div class="d-flex align-items-center">
-              <label class="form-check-label me-2">Show %</label>
-              <input type="checkbox" class="form-check-input" id="showPercentage" />
-          </div>
+        </div>
+        <div class="d-flex align-items-center">
+          <label class="form-check-label me-2">Show %</label>
+          <input type="checkbox" class="form-check-input" id="showPercentage" />
+        </div>
       </div>
-    </div>
       <canvas id="portfolioChart" height="100"></canvas>
     </div>
   </div>
 
+  <!-- Sector Allocation -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">🏛️ Sector Allocation</h5>
+      <canvas id="sectorChart" height="200"></canvas>
+    </div>
+  </div>
+
+  <!-- Holdings Table -->
   {% if symbols %}
   <div class="card mb-4">
     <div class="card-body">
@@ -67,9 +75,7 @@
             <td>${{ s.current_data.last_price }}</td>
             <td>{{ s.current_shares }}</td>
             <td>${{ s.current_value }}</td>
-            <td>
-              <a href="{{ url_for('add_transaction', portfolio_id=portfolio.portfolio_id, symbol_id=s.symbol_id) }}" class="btn btn-sm btn-outline-primary">Add Txn</a>
-            </td>
+            <td><a href="{{ url_for('add_transaction', portfolio_id=portfolio.portfolio_id, symbol_id=s.symbol_id) }}" class="btn btn-sm btn-outline-primary">Add Txn</a></td>
             <td class="text-center">
               {% if s.transactions %}
               <span class="toggle-transactions" data-target="transactions-{{ s.symbol_id }}" style="cursor: pointer;">
@@ -78,6 +84,7 @@
               {% endif %}
             </td>
           </tr>
+
           {% if s.transactions %}
           <tr id="transactions-{{ s.symbol_id }}" class="transaction-details" style="display: none;">
             <td colspan="7">
@@ -102,10 +109,10 @@
                     <td>${{ txn.transaction_cost }}</td>
                   </tr>
                   {% if txn.transaction_type.lower() == 'buy' %}
-                  {% set summary.total_cost = summary.total_cost + ((txn.shares | float) * (txn.price | float)) + (txn.transaction_cost | float) %}
-                  {% set summary.total_buy = summary.total_buy + (txn.shares | float) %}
+                    {% set summary.total_cost = summary.total_cost + ((txn.shares | float) * (txn.price | float)) + (txn.transaction_cost | float) %}
+                    {% set summary.total_buy = summary.total_buy + (txn.shares | float) %}
                   {% elif txn.transaction_type.lower() == 'sell' %}
-                  {% set summary.total_sell = summary.total_sell + (txn.shares | float) %}
+                    {% set summary.total_sell = summary.total_sell + (txn.shares | float) %}
                   {% endif %}
                   {% endfor %}
                 </tbody>
@@ -132,6 +139,7 @@
   </div>
   {% endif %}
 
+  <!-- Portfolio Summary -->
   <div class="card">
     <div class="card-body">
       <h5>📊 Portfolio Summary</h5>
@@ -156,22 +164,19 @@
     </div>
   </div>
   {% endif %}
-
 </div>
 
-<!-- Chart.js + Chart Logic -->
+<!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
   let chartInstance;
+
   function loadChart(period) {
     fetch(`/portfolio/{{ portfolio.portfolio_id }}/performance-data?period=${period}`)
       .then(response => response.json())
       .then(data => {
         const ctx = document.getElementById('portfolioChart').getContext('2d');
-
-        if (chartInstance) {
-          chartInstance.destroy();
-        }
+        if (chartInstance) chartInstance.destroy();
 
         const showPercentage = document.getElementById("showPercentage").checked;
         const dataset = {
@@ -199,29 +204,61 @@
       });
   }
 
-  // Load 1M by default
-  document.addEventListener("DOMContentLoaded", () => loadChart("1mo"));
-</script>
+  function loadSectorChart() {
+    fetch(`/portfolio/{{ portfolio.portfolio_id }}/sector-data`)
+      .then(response => response.json())
+      .then(data => {
+        const ctx = document.getElementById('sectorChart').getContext('2d');
+        new Chart(ctx, {
+          type: 'pie',
+          data: {
+            labels: data.labels,
+            datasets: [{
+              label: 'Sector Allocation (%)',
+              data: data.values,
+              backgroundColor: [
+                '#4e73df', '#1cc88a', '#36b9cc', '#f6c23e',
+                '#e74a3b', '#858796', '#fd7e14', '#20c997'
+              ]
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { position: 'right' },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    const label = context.label || '';
+                    const value = context.parsed;
+                    return `${label}: ${value.toFixed(2)}%`;
+                  }
+                }
+              }
+            }
+          }
+        });
+      });
+  }
 
-<!-- Expand/Collapse Transaction Table -->
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
+  document.addEventListener("DOMContentLoaded", () => {
+    loadChart("1mo");
+    loadSectorChart();
+  });
+
+  window.onload = function () {
     const toggles = document.querySelectorAll('.toggle-transactions');
     toggles.forEach(toggle => {
       toggle.addEventListener('click', () => {
         const targetId = toggle.dataset.target;
         const target = document.getElementById(targetId);
         const icon = toggle.querySelector('.toggle-icon');
-        if (target.style.display === 'none') {
-          target.style.display = 'table-row';
-          icon.innerHTML = '&#x25B2;';
-        } else {
-          target.style.display = 'none';
-          icon.innerHTML = '&#9660;';
+        if (target && icon) {
+          target.style.display = target.style.display === 'none' ? 'table-row' : 'none';
+          icon.innerHTML = target.style.display === 'none' ? '&#9660;' : '&#x25B2;';
         }
       });
     });
-  });
+  };
 </script>
-
 {% endblock %}

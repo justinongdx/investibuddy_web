@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash, send_file
+from flask import Flask, render_template, request, redirect, url_for, session, flash, send_file, jsonify
 from models.database_manager import DatabaseManager, create_database
 from models.user_manager import UserManager
 from models.portfolio_manager import PortfolioManager
@@ -234,28 +234,20 @@ def add_transaction(portfolio_id, symbol_id):
 
     return render_template('add_transaction.html', symbol=symbol, portfolio_id=portfolio_id)
 
-@app.route('/portfolio/<int:portfolio_id>/sector-exposure')
-def sector_exposure(portfolio_id):
-    if 'user_id' not in session:
-        flash("⚠️ Please log in to view sector exposure.")
-        return redirect(url_for('login'))
+from flask import jsonify
 
-    rows = db_manager.execute_query(
-        "SELECT portfolio_id FROM portfolios WHERE portfolio_id = ? AND user_id = ?",
-        (portfolio_id, session['user_id'])
-    )
-
-    if not rows:
-        flash("❌ Portfolio not found or does not belong to you.")
-        return redirect(url_for('view_portfolios'))
-
-    portfolio = {
-        'portfolio_id': portfolio_id,
-        'name': rows[0][0]
-    }
-
+@app.route("/portfolio/<int:portfolio_id>/sector-data")
+def sector_data(portfolio_id):
     exposure = portfolio_manager.calculate_sector_exposure(portfolio_id)
-    return render_template('sector_exposure.html', portfolio=portfolio, portfolio_id=portfolio_id, sector_exposure=exposure)
+
+    if not exposure:
+        return jsonify({"labels": [], "values": []})
+
+    labels = list(exposure.keys())
+    values = [round(data["percentage"], 2) for data in exposure.values()]
+
+    return jsonify({"labels": labels, "values": values})
+
 
 
 @app.route('/portfolio/<int:portfolio_id>/export')
@@ -306,7 +298,6 @@ def recommendations(portfolio_id):
     formatted = format_portfolio_for_gemini(symbol_metrics)
     gemini_response = get_gemini_recommendation(formatted)
 
-    # This ensures your data table doesn't go blank!
     for i, sym in enumerate(symbols):
         sym.current_data = {
             "last_price": symbol_metrics[i]["current_price"]
