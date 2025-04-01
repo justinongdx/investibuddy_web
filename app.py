@@ -6,10 +6,7 @@ from io import BytesIO
 from models.entities import Portfolio
 from dotenv import load_dotenv
 from models.portfolio_manager import calculate_portfolio_summary
-
-load_dotenv()
-
-
+from models.portfolio_history import get_portfolio_history
 import pandas as pd
 import datetime
 app = Flask(__name__)
@@ -325,6 +322,18 @@ def recommendations(portfolio_id):
         recommendation=gemini_response
     )
 
+@app.route('/portfolio/<int:portfolio_id>/performance-data')
+def portfolio_performance_data(portfolio_id):
+    period = request.args.get('period', '1mo')
+    symbols = portfolio_manager.get_portfolio_symbols(portfolio_id)
+    df = get_portfolio_history(symbols, period=period)
+
+    if df.empty:
+        return {"labels": [], "data": []}
+
+    labels = df.index.strftime('%Y-%m-%d').tolist()
+    data = df['Total'].round(2).tolist()
+    return {"labels": labels, "data": data}
 
 if __name__ == '__main__':
     app.run(debug=True)
