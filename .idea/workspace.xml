@@ -4,19 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e1a8e9de-b7af-4b2f-b553-27f796069872" name="Changes" comment="trying to add requirements.txt">
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/verify.html" afterDir="false" />
+    <list default="true" id="e1a8e9de-b7af-4b2f-b553-27f796069872" name="Changes" comment="Improve registration with email + 2FA registration">
       <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/investibuddy_web.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/investibuddy_web.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/database_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/database_manager.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/user_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/user_manager.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/login.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/register.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -134,7 +124,7 @@
       <workItem from="1743298628157" duration="3409000" />
       <workItem from="1743394183287" duration="111000" />
       <workItem from="1743395153670" duration="6100000" />
-      <workItem from="1743611666650" duration="1885000" />
+      <workItem from="1743611666650" duration="3361000" />
     </task>
     <task id="LOCAL-00001" summary="added an arrow to show/hide transactions under each ticker.">
       <option name="closed" value="true" />
@@ -160,7 +150,14 @@
       <option name="project" value="LOCAL" />
       <updated>1743396703897</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Improve registration with email + 2FA registration">
+      <created>1743613865983</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1743613865983</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -182,11 +179,12 @@
     <MESSAGE value="added an arrow to show/hide transactions under each ticker." />
     <MESSAGE value="Added sector exposure and export into pdf" />
     <MESSAGE value="trying to add requirements.txt" />
-    <option name="LAST_COMMIT_MESSAGE" value="trying to add requirements.txt" />
+    <MESSAGE value="Improve registration with email + 2FA registration" />
+    <option name="LAST_COMMIT_MESSAGE" value="Improve registration with email + 2FA registration" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/investibuddy_web$test_models.coverage" NAME="test_models Coverage Results" MODIFIED="1743412796564" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils" />
     <SUITE FILE_PATH="coverage/investibuddy_web$Flask__app_py_.coverage" NAME="Flask (app.py) Coverage Results" MODIFIED="1743299552042" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
-    <SUITE FILE_PATH="coverage/investibuddy_web$investibuddy_web.coverage" NAME="investibuddy_web Coverage Results" MODIFIED="1743613274350" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/investibuddy_web$investibuddy_web.coverage" NAME="investibuddy_web Coverage Results" MODIFIED="1743613573568" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
 </project>
