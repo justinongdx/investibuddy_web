@@ -184,6 +184,48 @@ class PortfolioManager:
             return Portfolio(*row[0])
         return None
 
+    def delete_portfolio(self, portfolio_id: int, user_id: int) -> bool:
+        # First check if the portfolio belongs to the user
+        rows = self.db_manager.execute_query(
+            "SELECT portfolio_id FROM portfolios WHERE portfolio_id = ? AND user_id = ?",
+            (portfolio_id, user_id)
+        )
+
+        if not rows:
+            return False
+
+        try:
+            # Get all symbols in the portfolio
+            symbols = self.db_manager.execute_query(
+                "SELECT symbol_id FROM symbols WHERE portfolio_id = ?",
+                (portfolio_id,)
+            )
+
+            # Delete all transactions for each symbol
+            for symbol in symbols:
+                symbol_id = symbol[0]
+                self.db_manager.execute_action(
+                    "DELETE FROM transactions WHERE symbol_id = ?",
+                    (symbol_id,)
+                )
+
+            # Delete all symbols in the portfolio
+            self.db_manager.execute_action(
+                "DELETE FROM symbols WHERE portfolio_id = ?",
+                (portfolio_id,)
+            )
+
+            # Finally, delete the portfolio itself
+            self.db_manager.execute_action(
+                "DELETE FROM portfolios WHERE portfolio_id = ?",
+                (portfolio_id,)
+            )
+
+            return True
+        except Exception as e:
+            print(f"Error deleting portfolio: {e}")
+            return False
+
 def calculate_portfolio_summary(symbols: list, manager=None):
     if manager is None:
         from models.portfolio_manager import PortfolioManager

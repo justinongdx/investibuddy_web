@@ -359,5 +359,21 @@ def portfolio_performance_data(portfolio_id):
     data = df['Total'].round(2).tolist()
     return {"labels": labels, "data": data}
 
+@app.route('/portfolio/<int:portfolio_id>/delete', methods=['POST'])
+def delete_portfolio(portfolio_id):
+    if 'user_id' not in session:
+        flash("⚠️ Please log in to delete a portfolio.")
+        return redirect(url_for('login'))
+
+    # Attempt to delete the portfolio
+    result = portfolio_manager.delete_portfolio(portfolio_id, session['user_id'])
+
+    if result:
+        flash("✅ Portfolio deleted successfully.")
+    else:
+        flash("❌ Failed to delete portfolio. It may not exist or doesn't belong to you.")
+
+    return redirect(url_for('view_portfolios'))
+
 if __name__ == '__main__':
     app.run(debug=True)
