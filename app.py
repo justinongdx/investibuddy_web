@@ -9,6 +9,8 @@ from models.portfolio_manager import calculate_portfolio_summary
 from models.portfolio_history import get_portfolio_history
 import pandas as pd
 import datetime
+import os
+
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'
 
@@ -18,41 +20,72 @@ db_manager = DatabaseManager()
 user_manager = UserManager(db_manager)
 portfolio_manager = PortfolioManager(db_manager)
 
+
 @app.route('/')
 def home():
     return render_template('index.html')
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
         username = request.form['username']
+        email = request.form['email']
         password = request.form['password']
         risk_tolerance = request.form['risk_tolerance']
 
-        if user_manager.register_user(username, password, risk_tolerance):
-            flash('✅ Registration successful! Please log in.')
-            return redirect(url_for('login'))
+        success, message, verification_code = user_manager.register_user(username, email, password, risk_tolerance)
+
+        if success:
+            # Store email in session for verification page
+            session['registration_email'] = email
+            flash(message)
+            return redirect(url_for('verify'))
         else:
-            flash('❌ Username already exists.')
+            flash(f'❌ {message}')
 
     return render_template('register.html')
+
+
+@app.route('/verify', methods=['GET', 'POST'])
+def verify():
+    if 'registration_email' not in session:
+        flash('⚠️ Please register first.')
+        return redirect(url_for('register'))
+
+    if request.method == 'POST':
+        verification_code = request.form['verification_code']
+        email = session['registration_email']
+
+        if user_manager.verify_user(email, verification_code):
+            # Clear registration email from session
+            session.pop('registration_email', None)
+            flash('✅ Verification successful! Please log in.')
+            return redirect(url_for('login'))
+        else:
+            flash('❌ Invalid verification code.')
+
+    return render_template('verify.html')
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form['username']
+        email = request.form['email']
         password = request.form['password']
-        user_id = user_manager.login_user(username, password)
+        result = user_manager.login_user(email, password)
 
-        if user_id:
+        if result:
+            user_id, username = result
             session['user_id'] = user_id
             session['username'] = username
             flash(f'😊 Welcome back, {username}!')
             return redirect(url_for('dashboard'))
         else:
-            flash('❌ Invalid username or password.')
+            flash('❌ Invalid email or password, or account not verified.')
 
     return render_template('login.html')
+
 
 @app.route('/logout')
 def logout():

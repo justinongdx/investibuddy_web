@@ -40,15 +40,20 @@ def create_database():
     conn = sqlite3.connect("portfolio_manager.db")
     cursor = conn.cursor()
 
+    # Create the users table if it doesn't exist
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS users (
         user_id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT UNIQUE NOT NULL,
+        email TEXT UNIQUE,
         password TEXT NOT NULL,
-        risk_tolerance TEXT CHECK(risk_tolerance IN ('Low', 'Medium', 'High')) NOT NULL
+        risk_tolerance TEXT CHECK(risk_tolerance IN ('Low', 'Medium', 'High')) NOT NULL,
+        verification_code TEXT,
+        verified INTEGER DEFAULT 0
     )
     """)
 
+    # Create the portfolios table if it doesn't exist
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS portfolios (
         portfolio_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -58,6 +63,7 @@ def create_database():
     )
     """)
 
+    # Create the symbols table if it doesn't exist
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS symbols (
         symbol_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -68,6 +74,7 @@ def create_database():
     )
     """)
 
+    # Create the transactions table if it doesn't exist
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS transactions (
         transaction_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -80,6 +87,27 @@ def create_database():
         FOREIGN KEY (symbol_id) REFERENCES symbols (symbol_id)
     )
     """)
+
+    try:
+        cursor.execute("SELECT email FROM users LIMIT 1")
+    except sqlite3.OperationalError:
+        # First add the column without UNIQUE constraint
+        cursor.execute("ALTER TABLE users ADD COLUMN email TEXT")
+        # Then add the UNIQUE constraint as an index
+        cursor.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_users_email ON users(email)")
+        print("Added email column to users table with UNIQUE constraint")
+
+    try:
+        cursor.execute("SELECT verification_code FROM users LIMIT 1")
+    except sqlite3.OperationalError:
+        cursor.execute("ALTER TABLE users ADD COLUMN verification_code TEXT")
+        print("Added verification_code column to users table")
+
+    try:
+        cursor.execute("SELECT verified FROM users LIMIT 1")
+    except sqlite3.OperationalError:
+        cursor.execute("ALTER TABLE users ADD COLUMN verified INTEGER DEFAULT 0")
+        print("Added verified column to users table")
 
     conn.commit()
     conn.close()
