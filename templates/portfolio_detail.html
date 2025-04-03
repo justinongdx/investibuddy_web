@@ -53,12 +53,18 @@
         <div class="card">
           <div class="card-body">
             <h5>📊 Portfolio Summary</h5>
-            <p><strong>Total Market Value:</strong> ${{ portfolio_summary.market_value }}</p>
-            <p><strong>Total Invested Capital:</strong> ${{ portfolio_summary.total_cost }}</p>
+            <p><strong>Total Investment:</strong> ${{ "%.2f"|format(portfolio_summary.total_investment|float) }}</p>
+            <p><strong>Current Value:</strong> ${{ "%.2f"|format(portfolio_summary.current_value|float) }}</p>
             <p>
               <strong>Unrealised P&amp;L:</strong>
-              <span class="{% if portfolio_summary.pnl >= 0 %}text-success{% else %}text-danger{% endif %}">
-                ${{ portfolio_summary.pnl }}
+              <span class="{% if portfolio_summary.unrealised_pnl >= 0 %}text-success{% else %}text-danger{% endif %}">
+                {% if portfolio_summary.unrealised_pnl < 0 %}-${{ "%.2f"|format(portfolio_summary.unrealised_pnl|abs) }}{% else %}${{ "%.2f"|format(portfolio_summary.unrealised_pnl) }}{% endif %}
+              </span>
+            </p>
+            <p>
+              <strong>Realised P&amp;L:</strong>
+              <span class="{% if portfolio_summary.realised_pnl >= 0 %}text-success{% else %}text-danger{% endif %}">
+                {% if portfolio_summary.realised_pnl < 0 %}-${{ "%.2f"|format(portfolio_summary.realised_pnl|abs) }}{% else %}${{ "%.2f"|format(portfolio_summary.realised_pnl) }}{% endif %}
               </span>
             </p>
           </div>
@@ -88,9 +94,9 @@
           <tr>
             <td>{{ s.ticker }}</td>
             <td>{{ s.sector }}</td>
-            <td>${{ s.current_data.last_price }}</td>
+            <td>${{ "%.2f"|format(s.current_data.last_price|float) }}</td>
             <td>{{ s.current_shares }}</td>
-            <td>${{ s.current_value }}</td>
+            <td>${{ "%.2f"|format(s.current_value|float) }}</td>
             <td>
               <a href="{{ url_for('add_transaction', portfolio_id=portfolio.portfolio_id, symbol_id=s.symbol_id) }}" class="btn btn-sm btn-outline-primary">Add Txn</a>
             </td>
@@ -122,8 +128,8 @@
                     <td>{{ txn.transaction_date }}</td>
                     <td>{{ txn.transaction_type }}</td>
                     <td>{{ txn.shares }}</td>
-                    <td>${{ txn.price }}</td>
-                    <td>${{ txn.transaction_cost }}</td>
+                    <td>${{ "%.2f"|format(txn.price|float) }}</td>
+                    <td>${{ "%.2f"|format(txn.transaction_cost|float) }}</td>
                   </tr>
                   {% if txn.transaction_type.lower() == 'buy' %}
                   {% set summary.total_cost = summary.total_cost + ((txn.shares | float) * (txn.price | float)) + (txn.transaction_cost | float) %}
@@ -140,8 +146,8 @@
                       Bought: {{ summary.total_buy }} shares,
                       Sold: {{ summary.total_sell }} shares,
                       Avg Cost/Share:
-                      {% if summary.total_buy > 0 %}${{ (summary.total_cost / summary.total_buy) | round(2) }}{% else %}-{% endif %},
-                      Total Cost: ${{ summary.total_cost | round(2) }}
+                      {% if summary.total_buy > 0 %}${{ "%.2f"|format((summary.total_cost / summary.total_buy)|float) }}{% else %}-{% endif %},
+                      Total Cost: ${{ "%.2f"|format(summary.total_cost|float) }}
                     </td>
                   </tr>
                 </tfoot>
@@ -195,6 +201,17 @@
             scales: {
               x: { title: { display: true, text: 'Date' } },
               y: { title: { display: true, text: showPercentage ? 'Change (%)' : 'Value ($)' } }
+            },
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    const label = context.dataset.label || '';
+                    const value = context.parsed.y;
+                    return `${label}: ${showPercentage ? value.toFixed(2) + '%' : '$' + value.toFixed(2)}`;
+                  }
+                }
+              }
             }
           }
         });
