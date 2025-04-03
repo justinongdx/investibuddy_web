@@ -129,37 +129,6 @@ class PortfolioManager:
 
         return exposure
 
-    def calculate_portfolio_metrics(self, portfolio_id: int) -> Dict:
-        symbols = self.get_portfolio_symbols(portfolio_id)
-        total_investment = 0
-        total_current_value = 0
-        total_realised_pl = 0
-        unrealised_pl_percent = 0
-        symbol_metrics = []
-
-        # Calculating metrics for each symbol
-        for symbol in symbols:
-            symbol_metric = self.calculate_symbol_metrics(symbol)
-            symbol_metrics.append(symbol_metric)
-            total_investment += symbol_metric["total_investment"]
-            total_current_value += symbol_metric["current_value"]
-            total_realised_pl += symbol_metric["realised_pl"]
-
-        active_investment = sum(symbol["current_shares"] * symbol["avg_cost"] for symbol in symbol_metrics if
-                                symbol["current_shares"] > 0)
-        if active_investment > 0:
-            unrealised_pl_percent = ((total_current_value - active_investment) / active_investment * 100)
-
-        portfolio_metrics = {
-            "total_investment": total_investment,
-            "total_current_value": total_current_value,
-            "total_unrealised_pl": total_current_value - active_investment,
-            "total_unrealised_pl_percent": unrealised_pl_percent,
-            "total_realised_pl": total_realised_pl,
-            "symbols": symbol_metrics
-        }
-        return portfolio_metrics
-
     def calculate_symbol_metrics(self, symbol):
         current_price = symbol.current_data.get("last_price",
                                                 0) if symbol.current_data and "error" not in symbol.current_data else 0
@@ -177,9 +146,7 @@ class PortfolioManager:
                 total_sold_amount += (txn.shares * txn.price) - txn.transaction_cost
 
         current_shares = total_shares - total_sold_shares
-        current_shares = max(current_shares, 0)
         avg_cost = total_investment / total_shares if total_shares > 0 else 0
-        avg_cost = avg_cost if current_shares > 0 else 0
 
         # Realised P/L
         realised_pl = 0
@@ -190,7 +157,7 @@ class PortfolioManager:
         current_value = current_shares * current_price
         unrealised_pl = current_value - (current_shares * avg_cost)
 
-        symbol_metrics = {
+        return {
             "ticker": symbol.ticker,
             "sector": symbol.sector,
             "current_price": current_price,
@@ -207,7 +174,6 @@ class PortfolioManager:
             "day_change_percent": symbol.current_data.get("change_percent",
                                                           0) if symbol.current_data and "error" not in symbol.current_data else 0
         }
-        return symbol_metrics
 
     def get_portfolio_by_id(self, portfolio_id: int) -> Optional[Portfolio]:
         row = self.db_manager.execute_query(
@@ -279,6 +245,5 @@ def calculate_portfolio_summary(symbols: list, manager=None):
         "total_cost": round(total_cost, 2),
         "pnl": round(market_value - total_cost, 2)
     }
-
 
 
