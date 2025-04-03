@@ -10,8 +10,34 @@
         <input type="text" class="form-control" id="username" name="username" required>
     </div>
     <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input type="email" class="form-control" id="email" name="email" required>
+        <div class="form-text">We'll send a verification code to this email</div>
+    </div>
+    <div class="mb-3">
         <label for="password" class="form-label">Password</label>
-        <input type="password" class="form-control" id="password" name="password" required>
+        <div class="input-group">
+            <input type="password" class="form-control" id="password" name="password" required onkeyup="checkPasswordStrength()">
+            <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                <i class="bi bi-eye" id="toggleIcon"></i>
+            </button>
+        </div>
+        <div id="passwordStrength" class="mt-2">
+            <div class="progress">
+                <div id="passwordStrengthBar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <small id="passwordStrengthText" class="form-text"></small>
+        </div>
+        <div id="passwordRequirements" class="mt-2">
+            <small class="form-text">Password must contain:</small>
+            <ul class="list-unstyled small">
+                <li id="lengthReq"><i class="bi bi-x-circle text-danger"></i> At least 8 characters</li>
+                <li id="uppercaseReq"><i class="bi bi-x-circle text-danger"></i> At least one uppercase letter</li>
+                <li id="lowercaseReq"><i class="bi bi-x-circle text-danger"></i> At least one lowercase letter</li>
+                <li id="numberReq"><i class="bi bi-x-circle text-danger"></i> At least one number</li>
+                <li id="specialReq"><i class="bi bi-x-circle text-danger"></i> At least one special character</li>
+            </ul>
+        </div>
     </div>
     <div class="mb-3">
         <label for="risk_tolerance" class="form-label">Risk Tolerance</label>
@@ -23,4 +49,88 @@
     </div>
     <button type="submit" class="btn btn-success">Register</button>
 </form>
+<div class="mt-3">
+    <p>Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
+</div>
+
+<!-- Include Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
+<!-- JavaScript for password toggle and strength -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const togglePassword = document.getElementById('togglePassword');
+        const password = document.getElementById('password');
+        const toggleIcon = document.getElementById('toggleIcon');
+
+        togglePassword.addEventListener('click', function() {
+            // Toggle password visibility
+            if (password.type === 'password') {
+                password.type = 'text';
+                toggleIcon.classList.remove('bi-eye');
+                toggleIcon.classList.add('bi-eye-slash');
+            } else {
+                password.type = 'password';
+                toggleIcon.classList.remove('bi-eye-slash');
+                toggleIcon.classList.add('bi-eye');
+            }
+        });
+
+        // Initial password strength check
+        checkPasswordStrength();
+    });
+
+    function checkPasswordStrength() {
+        const password = document.getElementById('password').value;
+        const strengthBar = document.getElementById('passwordStrengthBar');
+        const strengthText = document.getElementById('passwordStrengthText');
+
+        // Check individual requirements
+        const hasLength = password.length >= 8;
+        const hasUpperCase = /[A-Z]/.test(password);
+        const hasLowerCase = /[a-z]/.test(password);
+        const hasNumber = /[0-9]/.test(password);
+        const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+        // Update requirement list UI
+        updateRequirement('lengthReq', hasLength);
+        updateRequirement('uppercaseReq', hasUpperCase);
+        updateRequirement('lowercaseReq', hasLowerCase);
+        updateRequirement('numberReq', hasNumber);
+        updateRequirement('specialReq', hasSpecial);
+
+        // Calculate strength
+        let strength = 0;
+        if (hasLength) strength += 20;
+        if (hasUpperCase) strength += 20;
+        if (hasLowerCase) strength += 20;
+        if (hasNumber) strength += 20;
+        if (hasSpecial) strength += 20;
+
+        // Update progress bar
+        strengthBar.style.width = strength + '%';
+        strengthBar.setAttribute('aria-valuenow', strength);
+
+        // Change color based on strength
+        if (strength < 40) {
+            strengthBar.className = 'progress-bar bg-danger';
+            strengthText.textContent = 'Weak password';
+        } else if (strength < 80) {
+            strengthBar.className = 'progress-bar bg-warning';
+            strengthText.textContent = 'Medium strength password';
+        } else {
+            strengthBar.className = 'progress-bar bg-success';
+            strengthText.textContent = 'Strong password';
+        }
+    }
+
+    function updateRequirement(elementId, fulfilled) {
+        const element = document.getElementById(elementId);
+        if (fulfilled) {
+            element.innerHTML = element.innerHTML.replace('bi-x-circle text-danger', 'bi-check-circle text-success');
+        } else {
+            element.innerHTML = element.innerHTML.replace('bi-check-circle text-success', 'bi-x-circle text-danger');
+        }
+    }
+</script>
 {% endblock %}
