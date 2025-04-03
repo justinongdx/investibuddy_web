@@ -91,8 +91,11 @@ def create_database():
     try:
         cursor.execute("SELECT email FROM users LIMIT 1")
     except sqlite3.OperationalError:
-        cursor.execute("ALTER TABLE users ADD COLUMN email TEXT UNIQUE")
-        print("Added email column to users table")
+        # First add the column without UNIQUE constraint
+        cursor.execute("ALTER TABLE users ADD COLUMN email TEXT")
+        # Then add the UNIQUE constraint as an index
+        cursor.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_users_email ON users(email)")
+        print("Added email column to users table with UNIQUE constraint")
 
     try:
         cursor.execute("SELECT verification_code FROM users LIMIT 1")

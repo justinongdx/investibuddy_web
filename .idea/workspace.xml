@@ -5,14 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e1a8e9de-b7af-4b2f-b553-27f796069872" name="Changes" comment="Added portfolio performance (1d, 1w, 1m, ytd etc) and sector allocation to portfolio page">
-      <change afterPath="$PROJECT_DIR$/templates/verify.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/models/database_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/database_manager.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/user_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/user_manager.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/login.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/register.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/portfolio_manager.db" beforeDir="false" afterPath="$PROJECT_DIR$/portfolio_manager.db" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -97,7 +91,7 @@
       <workItem from="1743258247719" duration="6912000" />
       <workItem from="1743298628157" duration="3409000" />
       <workItem from="1743509356719" duration="2310000" />
-      <workItem from="1743670425262" duration="862000" />
+      <workItem from="1743670425262" duration="1286000" />
     </task>
     <task id="LOCAL-00001" summary="added an arrow to show/hide transactions under each ticker.">
       <option name="closed" value="true" />
@@ -147,7 +141,14 @@
       <option name="project" value="LOCAL" />
       <updated>1743510555314</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Added portfolio performance (1d, 1w, 1m, ytd etc) and sector allocation to portfolio page">
+      <created>1743671304250</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1743671304250</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -175,6 +176,6 @@
     <SUITE FILE_PATH="coverage/investibuddy_web$Flask__app_py_.coverage" NAME="Flask (app.py) Coverage Results" MODIFIED="1743509215976" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/investibuddy_web$portfolio_history.coverage" NAME="portfolio_history Coverage Results" MODIFIED="1743503387743" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/models" />
     <SUITE FILE_PATH="coverage/investibuddy_web$app.coverage" NAME="app Coverage Results" MODIFIED="1743501951541" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/investibuddy_web$investibuddy_web.coverage" NAME="investibuddy_web Coverage Results" MODIFIED="1743671198545" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/investibuddy_web$investibuddy_web.coverage" NAME="investibuddy_web Coverage Results" MODIFIED="1743671656778" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
 </project>
