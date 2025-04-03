@@ -2,28 +2,78 @@
 
 {% block title %}{{ portfolio.name }} - Portfolio Details{% endblock %}
 
-
 {% block content %}
 
-<h2 class="mb-3">📈 {{ portfolio.name }}</h2>
-<p class="text-muted">Portfolio ID: {{ portfolio.portfolio_id }}</p>
+<div class="container mt-5 mb-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="fw-bold mb-0">{{ portfolio.name }}</h2>
+    </div>
+    <div>
+      <a href="{{ url_for('add_symbol', portfolio_id=portfolio.portfolio_id) }}" class="btn btn-success me-2">➕ Add Symbol</a>
+      <a href="{{ url_for('export_portfolio_excel', portfolio_id=portfolio.portfolio_id) }}" class="btn btn-outline-secondary me-2">📥 Export to Excel</a>
+      <a href="{{ url_for('recommendations', portfolio_id=portfolio.portfolio_id) }}" class="btn btn-warning">🤖 Gemini Recommendations</a>
+    </div>
+  </div>
 
-<a href="{{ url_for('add_symbol', portfolio_id=portfolio.portfolio_id) }}" class="btn btn-success mb-4">➕ Add Symbol</a>
-<a href="{{ url_for('export_portfolio_excel', portfolio_id=portfolio.portfolio_id) }}" class="btn btn-outline-secondary mb-4 ms-2">
-  📥 Export to Excel
-</a>
-<a href="{{ url_for('sector_exposure', portfolio_id=portfolio.portfolio_id) }}" class="btn btn-info mb-4 ms-2">
-  🧭 View Sector Exposure
-</a>
-<a href="{{ url_for('recommendations', portfolio_id=portfolio.portfolio_id) }}" class="btn btn-warning mb-4 ms-2">
-  🤖 Get Gemini Recommendations
-</a>
+  <div class="row mb-4">
+    <div class="col-md-8">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title mb-3">📉 Portfolio Performance</h5>
+          <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-3">
+            <div class="d-flex justify-content-center w-100 mb-2 mb-md-0">
+              <div class="btn-group" role="group">
+                <button class="btn btn-sm btn-outline-primary" onclick="loadChart('1d')">1D</button>
+                <button class="btn btn-sm btn-outline-primary" onclick="loadChart('5d')">1W</button>
+                <button class="btn btn-sm btn-outline-primary" onclick="loadChart('1mo')">1M</button>
+                <button class="btn btn-sm btn-outline-primary" onclick="loadChart('ytd')">YTD</button>
+                <button class="btn btn-sm btn-outline-primary" onclick="loadChart('1y')">1Y</button>
+                <button class="btn btn-sm btn-outline-primary" onclick="loadChart('max')">Max</button>
+              </div>
+            </div>
+            <div class="d-flex align-items-center">
+              <label class="form-check-label me-2">Show %</label>
+              <input type="checkbox" class="form-check-input" id="showPercentage" />
+            </div>
+          </div>
+          <canvas id="portfolioChart" height="200"></canvas>
+        </div>
+      </div>
+    </div>
 
+    <div class="col-md-4">
+      <div class="d-flex flex-column justify-content-between h-100">
+        <div class="card mb-3">
+          <div class="card-body">
+            <h5 class="card-title">🏛️ Sector Allocation</h5>
+            <canvas id="sectorChart" height="180"></canvas>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <h5>📊 Portfolio Summary</h5>
+            <p><strong>Total Market Value:</strong> ${{ portfolio_summary.market_value }}</p>
+            <p><strong>Total Invested Capital:</strong> ${{ portfolio_summary.total_cost }}</p>
+            <p>
+              <strong>Unrealised P&amp;L:</strong>
+              <span class="{% if portfolio_summary.pnl >= 0 %}text-success{% else %}text-danger{% endif %}">
+                ${{ portfolio_summary.pnl }}
+              </span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-{% if symbols %}
-<table class="table table-striped">
-    <thead class="table-dark">
-        <tr>
+  {% if symbols %}
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">💼 Holdings</h5>
+      <table class="table table-striped mt-3">
+        <thead class="table-dark">
+          <tr>
             <th>Ticker</th>
             <th>Sector</th>
             <th>Current Price</th>
@@ -31,147 +81,186 @@
             <th>Current Value</th>
             <th>Actions</th>
             <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for s in symbols %}
-        <tr>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in symbols %}
+          <tr>
             <td>{{ s.ticker }}</td>
             <td>{{ s.sector }}</td>
             <td>${{ s.current_data.last_price }}</td>
             <td>{{ s.current_shares }}</td>
             <td>${{ s.current_value }}</td>
             <td>
-                <a href="{{ url_for('add_transaction', portfolio_id=portfolio.portfolio_id, symbol_id=s.symbol_id) }}" class="btn btn-sm btn-outline-primary">Add Txn</a>
+              <a href="{{ url_for('add_transaction', portfolio_id=portfolio.portfolio_id, symbol_id=s.symbol_id) }}" class="btn btn-sm btn-outline-primary">Add Txn</a>
             </td>
             <td class="text-center">
-                {% if s.transactions %}
-                <span class="toggle-transactions" data-target="transactions-{{ s.symbol_id }}" style="cursor: pointer;">
-                    <span class="toggle-icon">&#9660;</span>
-                </span>
-                {% endif %}
+              {% if s.transactions %}
+              <span class="toggle-transactions" data-target="transactions-{{ s.symbol_id }}" style="cursor: pointer;">
+                <span class="toggle-icon">&#9660;</span>
+              </span>
+              {% endif %}
             </td>
-        </tr>
-        {% if s.transactions %}
-        <tr id="transactions-{{ s.symbol_id }}" class="transaction-details" style="display: none;">
+          </tr>
+          {% if s.transactions %}
+          <tr id="transactions-{{ s.symbol_id }}" class="transaction-details" style="display: none;">
             <td colspan="7">
-                <table class="table table-bordered mt-2 mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Date</th>
-                            <th>Type</th>
-                            <th>Shares</th>
-                            <th>Price</th>
-                            <th>Cost</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% set summary = namespace(total_cost=0, total_buy=0, total_sell=0) %}
-                        {% for txn in s.transactions %}
-                        <tr>
-                            <td>{{ txn.transaction_date }}</td>
-                            <td>{{ txn.transaction_type }}</td>
-                            <td>{{ txn.shares }}</td>
-                            <td>${{ txn.price }}</td>
-                            <td>${{ txn.transaction_cost }}</td>
-                        </tr>
-
-                        {% if txn.transaction_type.lower() == 'buy' %}
-                            {% set summary.total_cost = summary.total_cost + ((txn.shares | float) * (txn.price | float)) + (txn.transaction_cost | float) %}
-                            {% set summary.total_buy = summary.total_buy + (txn.shares | float) %}
-                        {% elif txn.transaction_type.lower() == 'sell' %}
-                            {% set summary.total_sell = summary.total_sell + (txn.shares | float) %}
-                        {% endif %}
-                        {% endfor %}
-                    </tbody>
-                    <tfoot class="table-secondary">
-                        <tr>
-                            <td colspan="5">
-                                <strong>Summary:</strong>
-                                Bought: {{ summary.total_buy }} shares,
-                                Sold: {{ summary.total_sell }} shares,
-                                Avg Cost/Share:
-                                {% if summary.total_buy > 0 %}${{ (summary.total_cost / summary.total_buy) | round(2) }}{% else %}-{% endif %},
-                                Total Cost: ${{ summary.total_cost | round(2) }}
-
-                            </td>
-                        </tr>
-                    </tfoot>
-                </table>
+              <table class="table table-bordered mt-2 mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Shares</th>
+                    <th>Price</th>
+                    <th>Cost</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% set summary = namespace(total_cost=0, total_buy=0, total_sell=0) %}
+                  {% for txn in s.transactions %}
+                  <tr>
+                    <td>{{ txn.transaction_date }}</td>
+                    <td>{{ txn.transaction_type }}</td>
+                    <td>{{ txn.shares }}</td>
+                    <td>${{ txn.price }}</td>
+                    <td>${{ txn.transaction_cost }}</td>
+                  </tr>
+                  {% if txn.transaction_type.lower() == 'buy' %}
+                  {% set summary.total_cost = summary.total_cost + ((txn.shares | float) * (txn.price | float)) + (txn.transaction_cost | float) %}
+                  {% set summary.total_buy = summary.total_buy + (txn.shares | float) %}
+                  {% elif txn.transaction_type.lower() == 'sell' %}
+                  {% set summary.total_sell = summary.total_sell + (txn.shares | float) %}
+                  {% endif %}
+                  {% endfor %}
+                </tbody>
+                <tfoot class="table-secondary">
+                  <tr>
+                    <td colspan="5">
+                      <strong>Summary:</strong>
+                      Bought: {{ summary.total_buy }} shares,
+                      Sold: {{ summary.total_sell }} shares,
+                      Avg Cost/Share:
+                      {% if summary.total_buy > 0 %}${{ (summary.total_cost / summary.total_buy) | round(2) }}{% else %}-{% endif %},
+                      Total Cost: ${{ summary.total_cost | round(2) }}
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
             </td>
-        </tr>
-        {% endif %}
-        {% endfor %}
-    </tbody>
-</table>
+          </tr>
+          {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
 
-    <style>
-    .toggle-transactions {
-        display: inline-block;
-        width: 20px;
-        height: 20px;
-        text-align: center;
-        line-height: 20px;
-    }
-
-    .transaction-details {
-        background-color: #f8f9fa;
-    }
-
-    /* Add a subtle animation to the arrow */
-    .toggle-icon {
-        display: inline-block;
-        transition: transform 0.3s ease;
-    }
-
-    /* Remove bottom border of the row above the expanded transactions */
-    tr:has(+ tr.transaction-details:not([style*="display: none"])) {
-        border-bottom: none;
-    }
-    </style>
-
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const toggleElements = document.querySelectorAll('.toggle-transactions');
-
-        toggleElements.forEach(function(element) {
-            element.addEventListener('click', function() {
-                const targetId = this.getAttribute('data-target');
-                const targetRow = document.getElementById(targetId);
-                const icon = this.querySelector('.toggle-icon');
-
-                if (targetRow.style.display === 'none') {
-                    targetRow.style.display = 'table-row';
-                    icon.innerHTML = '&#x25B2;';
-                    icon.style.transform = 'rotate(0deg)';
-                } else {
-                    targetRow.style.display = 'none';
-                    icon.innerHTML = '&#9660;';
-                    icon.style.transform = 'rotate(0deg)';
-                }
-            });
-        });
-    });
-    </script>
-
-{% else %}
-    <div class="alert alert-info">This portfolio has no stocks yet. Use the button above to add one.</div>
-{% endif %}
-<hr class="my-4">
-<h4>📊 Portfolio Summary</h4>
-<p><strong>Total Market Value:</strong> ${{ portfolio_summary.market_value }}</p>
-<p><strong>Total Invested Capital:</strong> ${{ portfolio_summary.total_cost }}</p>
-<p><strong>Unrealised P&amp;L:</strong> ${{ portfolio_summary.pnl }}</p>
-{% if recommendation %}
-<hr class="my-4">
-<h4>🤖 Gemini AI Recommendations</h4>
-<div class="alert alert-secondary" style="white-space: pre-wrap;">
-  {{ recommendation }}
+  {% if recommendation %}
+  <div class="card mt-4">
+    <div class="card-body">
+      <h5>🤖 Gemini AI Recommendations</h5>
+      <div class="alert alert-secondary" style="white-space: pre-wrap;">
+        {{ recommendation }}
+      </div>
+    </div>
+  </div>
+  {% endif %}
 </div>
-{% endif %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  let chartInstance;
+  function loadChart(period) {
+    fetch(`/portfolio/{{ portfolio.portfolio_id }}/performance-data?period=${period}`)
+      .then(response => response.json())
+      .then(data => {
+        const ctx = document.getElementById('portfolioChart').getContext('2d');
+        if (chartInstance) chartInstance.destroy();
+
+        const showPercentage = document.getElementById("showPercentage").checked;
+        const dataset = {
+          label: showPercentage ? 'Portfolio Change (%)' : 'Portfolio Value ($)',
+          data: showPercentage ? data.percentage_data : data.data,
+          borderColor: 'rgba(75, 192, 192, 1)',
+          fill: false,
+          tension: 0.1
+        };
+
+        chartInstance = new Chart(ctx, {
+          type: 'line',
+          data: { labels: data.labels, datasets: [dataset] },
+          options: {
+            responsive: true,
+            scales: {
+              x: { title: { display: true, text: 'Date' } },
+              y: { title: { display: true, text: showPercentage ? 'Change (%)' : 'Value ($)' } }
+            }
+          }
+        });
+      });
+  }
+  document.addEventListener("DOMContentLoaded", () => loadChart("1mo"));
+</script>
+
+<script>
+  function loadSectorChart() {
+    fetch(`/portfolio/{{ portfolio.portfolio_id }}/sector-data`)
+      .then(response => response.json())
+      .then(data => {
+        const ctx = document.getElementById('sectorChart').getContext('2d');
+        new Chart(ctx, {
+          type: 'pie',
+          data: {
+            labels: data.labels,
+            datasets: [{
+              label: 'Sector Allocation (%)',
+              data: data.values,
+              backgroundColor: [
+                '#4e73df', '#1cc88a', '#36b9cc', '#f6c23e',
+                '#e74a3b', '#858796', '#fd7e14', '#20c997'
+              ]
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { position: 'right' },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    const label = context.label || '';
+                    const value = context.parsed;
+                    return `${label}: ${value.toFixed(2)}%`;
+                  }
+                }
+              }
+            }
+          }
+        });
+      });
+  }
+
+  document.addEventListener("DOMContentLoaded", () => loadSectorChart());
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const toggles = document.querySelectorAll('.toggle-transactions');
+    toggles.forEach(toggle => {
+      toggle.addEventListener('click', () => {
+        const targetId = toggle.dataset.target;
+        const target = document.getElementById(targetId);
+        const icon = toggle.querySelector('.toggle-icon');
+        if (target.style.display === 'none') {
+          target.style.display = 'table-row';
+          icon.innerHTML = '&#x25B2;';
+        } else {
+          target.style.display = 'none';
+          icon.innerHTML = '&#9660;';
+        }
+      });
+    });
+  });
+</script>
 {% endblock %}
-
-
-
-
-

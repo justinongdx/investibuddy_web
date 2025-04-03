@@ -4,14 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e1a8e9de-b7af-4b2f-b553-27f796069872" name="Changes" comment="trying to add requirements.txt">
-      <change afterPath="$PROJECT_DIR$/.env" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/utils/gemini.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/utils/test_models.py" afterDir="false" />
+    <list default="true" id="e1a8e9de-b7af-4b2f-b553-27f796069872" name="Changes" comment="Added portfolio performance (1d, 1w, 1m, ytd etc) and sector allocation to portfolio page">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/portfolio_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/portfolio_manager.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/portfolio_manager.db" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/portfolio_manager.db" beforeDir="false" afterPath="$PROJECT_DIR$/portfolio_manager.db" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/portfolio_detail.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/portfolio_detail.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -42,7 +37,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="f1aeb99f7d97d6962aa727c9667b79542c142399" />
+        <entry key="$PROJECT_DIR$" value="master" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -55,8 +50,8 @@
 }</component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/justinongdx/investibuddy_web.git&quot;,
-    &quot;accountId&quot;: &quot;1c1a1c74-bb14-487a-a92c-923cb98dc5f0&quot;
+    &quot;url&quot;: &quot;https://github.com/lisalim14/investibuddy_web&quot;,
+    &quot;accountId&quot;: &quot;886b3fa5-21ae-41e0-922b-e4d773e9b0ba&quot;
   }
 }</component>
   <component name="ProjectColorInfo">{
@@ -70,49 +65,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultHtmlFileTemplate": "HTML File",
-    "Flask server.Flask (app.py).executor": "Run",
-    "Flask server.investibuddy_web.executor": "Run",
-    "Python.test_models.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "f1aeb99f",
-    "ignore.virus.scanning.warn.message": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;Flask server.Flask (app.py).executor&quot;: &quot;Run&quot;,
+    &quot;Flask server.investibuddy_web.executor&quot;: &quot;Run&quot;,
+    &quot;Python.app.executor&quot;: &quot;Run&quot;,
+    &quot;Python.portfolio_history.executor&quot;: &quot;Run&quot;,
+    &quot;Python.portfolio_manager.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;lisa&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
-  <component name="RunManager" selected="Flask server.investibuddy_web">
-    <configuration name="test_models" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="investibuddy_web" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/utils" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/utils/test_models.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
+}</component>
+  <component name="RunManager">
     <configuration name="investibuddy_web" type="Python.FlaskServer">
       <option name="flaskDebug" value="true" />
       <module name="investibuddy_web" />
@@ -122,20 +96,14 @@
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <option name="SDK_HOME" value="" />
-      <option name="SDK_NAME" value="Python 3.9 (investibuddy_web)" />
       <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
+      <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="launchJavascriptDebuger" value="false" />
       <method v="2" />
     </configuration>
-    <recent_temporary>
-      <list>
-        <item itemvalue="Python.test_models" />
-      </list>
-    </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -156,8 +124,7 @@
       <workItem from="1742888109912" duration="11168000" />
       <workItem from="1743258247719" duration="6912000" />
       <workItem from="1743298628157" duration="3409000" />
-      <workItem from="1743394183287" duration="111000" />
-      <workItem from="1743395153670" duration="6100000" />
+      <workItem from="1743509356719" duration="2310000" />
     </task>
     <task id="LOCAL-00001" summary="added an arrow to show/hide transactions under each ticker.">
       <option name="closed" value="true" />
@@ -175,40 +142,55 @@
       <option name="project" value="LOCAL" />
       <updated>1743299893762</updated>
     </task>
-    <task id="LOCAL-00003" summary="trying to add requirements.txt">
+    <task id="LOCAL-00003" summary="Added sector exposure and export into pdf">
       <option name="closed" value="true" />
-      <created>1743396703897</created>
+      <created>1743507083485</created>
       <option name="number" value="00003" />
       <option name="presentableId" value="LOCAL-00003" />
       <option name="project" value="LOCAL" />
-      <updated>1743396703897</updated>
+      <updated>1743507083485</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Added sector exposure and export into pdf">
+      <option name="closed" value="true" />
+      <created>1743507095964</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1743507095964</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Added portfolio performance (1d, 1w, 1m, ytd etc) and sector allocation to portfolio page">
+      <option name="closed" value="true" />
+      <created>1743510475276</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1743510475276</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Added portfolio performance (1d, 1w, 1m, ytd etc) and sector allocation to portfolio page">
+      <option name="closed" value="true" />
+      <created>1743510555314</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1743510555314</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
-  <component name="Vcs.Log.Tabs.Properties">
-    <option name="TAB_STATES">
-      <map>
-        <entry key="MAIN">
-          <value>
-            <State />
-          </value>
-        </entry>
-      </map>
-    </option>
-  </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="added an arrow to show/hide transactions under each ticker." />
     <MESSAGE value="Added sector exposure and export into pdf" />
-    <MESSAGE value="trying to add requirements.txt" />
-    <option name="LAST_COMMIT_MESSAGE" value="trying to add requirements.txt" />
+    <MESSAGE value="Added portfolio performance (1d, 1w, 1m, ytd etc) and sector allocation to portfolio page" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added portfolio performance (1d, 1w, 1m, ytd etc) and sector allocation to portfolio page" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/investibuddy_web$test_models.coverage" NAME="test_models Coverage Results" MODIFIED="1743412796564" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils" />
-    <SUITE FILE_PATH="coverage/investibuddy_web$investibuddy_web.coverage" NAME="investibuddy_web Coverage Results" MODIFIED="1743413103330" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
-    <SUITE FILE_PATH="coverage/investibuddy_web$Flask__app_py_.coverage" NAME="Flask (app.py) Coverage Results" MODIFIED="1743299552042" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/investibuddy_web$app.coverage" NAME="app Coverage Results" MODIFIED="1743501951541" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/investibuddy_web$portfolio_manager.coverage" NAME="portfolio_manager Coverage Results" MODIFIED="1743502968984" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/models" />
+    <SUITE FILE_PATH="coverage/investibuddy_web$investibuddy_web.coverage" NAME="investibuddy_web Coverage Results" MODIFIED="1743511549833" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/investibuddy_web$Flask__app_py_.coverage" NAME="Flask (app.py) Coverage Results" MODIFIED="1743509215976" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/investibuddy_web$portfolio_history.coverage" NAME="portfolio_history Coverage Results" MODIFIED="1743503387743" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/models" />
   </component>
 </project>
