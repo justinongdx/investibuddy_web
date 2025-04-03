@@ -184,6 +184,7 @@ def portfolio_detail(portfolio_id):
     }
 
     symbols = portfolio_manager.get_portfolio_symbols(portfolio_id)
+    portfolio_metrics = portfolio_manager.calculate_portfolio_metrics(portfolio_id)
 
     total_market_value = 0
     total_cost_all = 0
@@ -214,12 +215,14 @@ def portfolio_detail(portfolio_id):
         total_cost_all += total_cost
 
     portfolio_summary = {
-        'market_value': round(total_market_value, 2),
-        'total_cost': round(total_cost_all, 2),
-        'pnl': round(total_market_value - total_cost_all, 2)
+        'total_investment': round(portfolio_metrics['total_investment'], 2),
+        'current_value': round(portfolio_metrics['total_current_value'], 2),
+        'unrealised_pnl': round(portfolio_metrics['total_unrealised_pl'], 2),
+        'realised_pnl': round(portfolio_metrics['total_realised_pl'], 2)
     }
 
-    return render_template('portfolio_detail.html', portfolio=portfolio, symbols=symbols, portfolio_summary=portfolio_summary)
+    return render_template('portfolio_detail.html', portfolio=portfolio, symbols=symbols,
+                           portfolio_summary=portfolio_summary)
 
 @app.route('/portfolio/<int:portfolio_id>/symbol/<int:symbol_id>/add-transaction', methods=['GET', 'POST'])
 def add_transaction(portfolio_id, symbol_id):
@@ -327,6 +330,14 @@ def recommendations(portfolio_id):
     # Calculate updated metrics BEFORE rendering template
     symbol_metrics = [portfolio_manager.calculate_symbol_metrics(s) for s in symbols]
 
+    portfolio_metrics = portfolio_manager.calculate_portfolio_metrics(portfolio_id)
+    portfolio_summary = {
+        'total_investment': round(portfolio_metrics['total_investment'], 2),
+        'current_value': round(portfolio_metrics['total_current_value'], 2),
+        'unrealised_pnl': round(portfolio_metrics['total_unrealised_pl'], 2),
+        'realised_pnl': round(portfolio_metrics['total_realised_pl'], 2)
+    }
+
     # Use the calculated data for Gemini + frontend
     formatted = format_portfolio_for_gemini(symbol_metrics)
     gemini_response = get_gemini_recommendation(formatted)
@@ -342,7 +353,7 @@ def recommendations(portfolio_id):
         "portfolio_detail.html",
         portfolio=portfolio,
         symbols=symbols,
-        portfolio_summary=calculate_portfolio_summary(symbols),
+        portfolio_summary=portfolio_summary,
         recommendation=gemini_response
     )
 
