@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InvestiBuddy Chatbot</title>
+    <style>
+        /* Integrated chatbot.css */
+        :root {
+            --primary-color: #3a7bd5; /* More professional blue color */
+            --primary-gradient: linear-gradient(135deg, #3a7bd5, #00d2ff); /* Gradient adds modern touch */
+            --light-primary: #f0f7ff;
+            --text-color: #2c3e50;
+            --bg-color: #fff;
+            --user-bubble: #e6f2ff;
+            --bot-bubble: var(--light-primary);
+            --shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            --border-radius: 16px;
+        }
+
+        /* Chatbot launcher button */
+        .chatbot-launcher {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: var(--primary-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .chatbot-launcher:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 30px rgba(58, 123, 213, 0.3);
+        }
+
+        .chatbot-launcher img {
+            width: 35px;
+            height: 35px;
+        }
+
+        /* Chatbot container */
+        .chatbot-container {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 350px;
+            height: 500px;
+            background-color: var(--bg-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            z-index: 999;
+            overflow: hidden;
+            transform: translateY(20px);
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .chatbot-container.active {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        /* Chatbot header */
+        .chatbot-header {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 16px 20px;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chatbot-header h3 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+        }
+
+        .close-btn {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        /* Chatbot messages container */
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Chat bubbles */
+        .message {
+            max-width: 75%;
+            margin-bottom: 16px;
+            padding: 14px 18px;
+            border-radius: 18px;
+            line-height: 1.5;
+            font-size: 14px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            position: relative;
+            word-wrap: break-word;
+        }
+
+        .bot-message {
+            align-self: flex-start;
+            background-color: var(--bot-bubble);
+            border-bottom-left-radius: 4px;
+            color: var(--text-color);
+        }
+
+        .user-message {
+            align-self: flex-end;
+            background: var(--primary-gradient);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        /* Template questions */
+        .template-questions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+            margin-bottom: 20px; /* Add consistent spacing after template questions */
+        }
+
+        .template-question {
+            background-color: white;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: var(--border-radius);
+            padding: 12px 16px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .template-question:hover {
+            background-color: var(--light-primary);
+            border-color: rgba(58, 123, 213, 0.3);
+        }
+
+        /* Suggested questions that appear after responses */
+        .suggested-questions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+            margin-bottom: 20px; /* Add bottom margin for spacing before next message */
+            align-self: flex-start;
+        }
+
+        .suggested-question {
+            background-color: white;
+            border: 1px solid rgba(58, 123, 213, 0.3);
+            border-radius: 16px;
+            padding: 8px 14px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-color);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .suggested-question:hover {
+            background: var(--primary-gradient);
+            color: white;
+            border-color: transparent;
+        }
+
+        /* Chatbot input area */
+        .chat-input-container {
+            padding: 16px 20px;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            background-color: #fafafa;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 24px;
+            outline: none;
+            font-size: 14px;
+            transition: all 0.2s;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .chat-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 1px 6px rgba(58, 123, 213, 0.2);
+        }
+
+        .send-btn {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-left: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            box-shadow: 0 2px 5px rgba(58, 123, 213, 0.2);
+        }
+
+        .send-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(58, 123, 213, 0.3);
+        }
+
+        /* Chatbot typing indicator */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .typing-indicator.active {
+            opacity: 1;
+        }
+
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            margin: 0 2px;
+            display: inline-block;
+            animation: bounce 1.5s infinite ease-in-out;
+        }
+
+        .typing-indicator span:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes bounce {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-5px);
+            }
+        }
+
+        /* Responsive styles */
+        @media (max-width: 480px) {
+            .chatbot-container {
+                width: 85%;
+                height: 70vh;
+                bottom: 80px;
+                right: 7.5%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Chatbot launcher button -->
+    <div class="chatbot-launcher" id="chatbotLauncher">
+        <img src="{{ url_for('static', filename='InvestiBuddy_1.png') }}" alt="InvestiBuddy Assistant" onerror="this.src='/api/placeholder/70/70'"/>
+    </div>
+
+    <!-- Chatbot window -->
+    <div class="chatbot-container" id="chatbotContainer">
+        <div class="chatbot-header">
+            <h3>InvestiBuddy Assistant</h3>
+            <button class="close-btn" id="closeBtn">&times;</button>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+            <!-- Initial welcome message -->
+            <div class="message bot-message">
+                Hello {{ session.username }}! I'm your InvestiBuddy assistant. How can I help you today?
+            </div>
+
+            <!-- Template questions -->
+            <div class="template-questions">
+                <button class="template-question" data-question="How do I create a portfolio?">
+                    How do I create a portfolio?
+                </button>
+                <button class="template-question" data-question="What is a good investment strategy?">
+                    What is a good investment strategy?
+                </button>
+                <button class="template-question" data-question="How can I track my investments?">
+                    How can I track my investments?
+                </button>
+            </div>
+
+            <!-- Typing indicator -->
+            <div class="typing-indicator" id="typingIndicator">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+
+        <div class="chat-input-container">
+            <input type="text" class="chat-input" id="chatInput" placeholder="Type your message..." />
+            <button class="send-btn" id="sendBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083l6-15Zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471-.47 1.178Z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Integrated chatbot.js
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elements
+            const chatbotLauncher = document.getElementById('chatbotLauncher');
+            const chatbotContainer = document.getElementById('chatbotContainer');
+            const closeBtn = document.getElementById('closeBtn');
+            const chatMessages = document.getElementById('chatMessages');
+            const chatInput = document.getElementById('chatInput');
+            const sendBtn = document.getElementById('sendBtn');
+            const typingIndicator = document.getElementById('typingIndicator');
+            const templateQuestions = document.querySelectorAll('.template-question');
+
+            // Predefined responses
+            const responses = {
+                "How do I create a portfolio?": {
+                    text: "To create a portfolio, go to your dashboard and click on the 'Create Portfolio' button. Enter a name for your portfolio and you're ready to go!",
+                    suggestions: ["How do I add stocks to my portfolio?", "Can I have multiple portfolios?"]
+                },
+                "What is a good investment strategy?": {
+                    text: "A good investment strategy depends on your goals and risk tolerance. Generally, diversification across different asset classes and regular investing over time (dollar-cost averaging) are recommended approaches.",
+                    suggestions: ["How do I analyse my portfolio risk?", "What sectors should I invest in?"]
+                },
+                "How can I track my investments?": {
+                    text: "InvestiBuddy makes it easy to track your investments! Once you've created a portfolio, you can add symbols, record transactions, and view detailed analytics including performance charts and sector breakdowns.",
+                    suggestions: ["How do I export my portfolio data?", "How can I see my performance over time?"]
+                },
+                "How do I add stocks to my portfolio?": {
+                    text: "To add stocks to your portfolio, open the portfolio and click 'Add Symbol'. Enter the ticker symbol of the stock you want to add, and we'll fetch all the relevant data for you.",
+                    suggestions: ["How do I record transactions?", "How do I see stock details?"]
+                },
+                "Can I have multiple portfolios?": {
+                    text: "Yes! You can create as many portfolios as you need. This is helpful for organising different investment strategies or separating different financial goals.",
+                    suggestions: ["How do I switch between portfolios?", "Can I compare portfolios?"]
+                },
+                "How do I analyse my portfolio risk?": {
+                    text: "InvestiBuddy provides risk metrics for your portfolio, including sector exposure and concentration analysis. Go to your portfolio details to see these metrics.",
+                    suggestions: ["What is a good portfolio allocation?", "How do I reduce portfolio risk?"]
+                },
+                "What sectors should I invest in?": {
+                    text: "The best sectors to invest in depend on market conditions and your investment goals. InvestiBuddy provides sector performance data to help you make informed decisions.",
+                    suggestions: ["How do I view sector allocation?", "How do sectors affect my portfolio?"]
+                },
+                "How do I export my portfolio data?": {
+                    text: "You can export your portfolio data by going to the portfolio details page and clicking the 'Export' button. This will download an Excel file with all your portfolio information.",
+                    suggestions: ["What data is included in the export?", "Can I import portfolio data?"]
+                },
+                "How can I see my performance over time?": {
+                    text: "InvestiBuddy provides performance charts for your portfolios. Go to the portfolio details page and look for the 'Performance' section to see how your investments have grown over time.",
+                    suggestions: ["What time periods can I view?", "How do I compare to benchmarks?"]
+                },
+                "How do I record transactions?": {
+                    text: "To record a transaction, go to the symbol in your portfolio and click 'Add Transaction'. Enter the transaction type (buy/sell), date, shares, and price.",
+                    suggestions: ["How do I record dividends?", "Can I edit transactions?"]
+                },
+                "How do I see stock details?": {
+                    text: "Click on any stock symbol in your portfolio to view detailed information including current price, performance charts, company information, and your transaction history.",
+                    suggestions: ["How do I set price alerts?", "Can I see financial statements?"]
+                },
+                "How do I switch between portfolios?": {
+                    text: "You can switch between portfolios from your dashboard by clicking on the portfolio name in the portfolios list, or using the portfolio dropdown menu in the navigation bar.",
+                    suggestions: ["How do I rename a portfolio?", "How do I delete a portfolio?"]
+                },
+                "Can I compare portfolios?": {
+                    text: "Yes! InvestiBuddy offers a portfolio comparison tool. Select 'Compare Portfolios' from the dashboard and choose which portfolios you want to compare side by side.",
+                    suggestions: ["What metrics are used for comparison?", "How do I share comparison results?"]
+                },
+                "What is a good portfolio allocation?": {
+                    text: "A balanced portfolio typically includes a mix of stocks, bonds, and other assets based on your risk tolerance and goals. InvestiBuddy's recommendation tool can suggest allocations based on your profile.",
+                    suggestions: ["How do I rebalance my portfolio?", "What is dollar-cost averaging?"]
+                },
+                "How do I reduce portfolio risk?": {
+                    text: "To reduce risk, diversify across different sectors, asset classes, and geographic regions. InvestiBuddy's diversification score shows how well your portfolio is protected against market volatility.",
+                    suggestions: ["What is beta in investing?", "How do I hedge my portfolio?"]
+                },
+                "How do I view sector allocation?": {
+                    text: "Your sector allocation is displayed in a pie chart on your portfolio details page. This visualisation helps you understand which industries your investments are concentrated in.",
+                    suggestions: ["What is a good sector balance?", "How do I filter by sector?"]
+                },
+                "How do sectors affect my portfolio?": {
+                    text: "Different sectors perform differently based on economic conditions. InvestiBuddy shows your sector exposure and highlights concentration risks to help you maintain proper diversification.",
+                    suggestions: ["Which sectors are defensive?", "How do I track sector performance?"]
+                },
+                "What data is included in the export?": {
+                    text: "Portfolio exports include your holdings, transaction history, performance metrics, allocation breakdowns, dividend history, and realised/unrealised gains and losses.",
+                    suggestions: ["Can I customise export formats?", "How often should I export data?"]
+                },
+                "Can I import portfolio data?": {
+                    text: "Yes, InvestiBuddy supports importing portfolio data from Excel or CSV files. Go to 'Import' in your dashboard and follow the template format for smooth importing.",
+                    suggestions: ["What format should I use?", "Can I import from brokerages?"]
+                }
+            };
+
+            // Additional custom responses
+            const customResponses = {
+                "hello": {
+                    text: "Hi there! How can I assist you with InvestiBuddy today?",
+                    suggestions: ["How do I create a portfolio?", "What features do you offer?"]
+                },
+                "hi": {
+                    text: "Hello! How can I help you with your investments?",
+                    suggestions: ["How do I track my investments?", "How do I add stocks?"]
+                },
+                "thanks": {
+                    text: "You're welcome! Is there anything else I can help you with?",
+                    suggestions: ["How do I export data?", "How can I get recommendations?"]
+                },
+                "thank you": {
+                    text: "You're welcome! Is there anything else I can help you with?",
+                    suggestions: ["How do I export data?", "How can I get recommendations?"]
+                }
+            };
+
+            // Open/close chatbot
+            if (chatbotLauncher) {
+                chatbotLauncher.addEventListener('click', toggleChatbot);
+            }
+
+            if (closeBtn) {
+                closeBtn.addEventListener('click', toggleChatbot);
+            }
+
+            // Click outside to close
+            document.addEventListener('click', function(event) {
+                if (chatbotContainer &&
+                    !chatbotContainer.contains(event.target) &&
+                    chatbotLauncher &&
+                    !chatbotLauncher.contains(event.target) &&
+                    chatbotContainer.classList.contains('active')) {
+                    toggleChatbot();
+                }
+            });
+
+            // Send message with button or Enter key
+            if (sendBtn) {
+                sendBtn.addEventListener('click', sendMessage);
+            }
+
+            if (chatInput) {
+                chatInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        sendMessage();
+                    }
+                });
+            }
+
+            // Handle template questions
+            if (templateQuestions) {
+                templateQuestions.forEach(question => {
+                    question.addEventListener('click', function() {
+                        const questionText = this.dataset.question;
+                        handleQuestionClick(questionText);
+                    });
+                });
+            }
+
+            // Function to handle question click
+            function handleQuestionClick(questionText) {
+                // First remove any existing suggested questions that might be visible
+                const existingSuggestions = document.querySelector('.suggested-questions');
+                if (existingSuggestions) {
+                    existingSuggestions.remove();
+                }
+
+                addUserMessage(questionText);
+
+                // Remove template questions if this is the initial set
+                const initialTemplateQuestions = document.querySelector('.template-questions');
+                if (initialTemplateQuestions) {
+                    initialTemplateQuestions.remove();
+                }
+
+                // Simulate bot typing and response
+                simulateTyping(() => {
+                    const responseObj = responses[questionText] || {
+                        text: "I don't have specific information about that. Could you try asking something else?",
+                        suggestions: ["How do I create a portfolio?", "How can I track my investments?"]
+                    };
+
+                    addBotMessage(responseObj.text, responseObj.suggestions);
+                });
+            }
+
+            // Handle clicks on suggested questions
+            document.addEventListener('click', function(event) {
+                if (event.target.classList.contains('suggested-question')) {
+                    const questionText = event.target.textContent.trim();
+
+                    // Important: Find and remove the parent .suggested-questions element
+                    const parentSuggestions = event.target.closest('.suggested-questions');
+                    if (parentSuggestions) {
+                        parentSuggestions.remove();
+                    }
+
+                    handleQuestionClick(questionText);
+                }
+            });
+
+            // Function to toggle chatbot visibility
+            function toggleChatbot() {
+                if (chatbotContainer) {
+                    chatbotContainer.classList.toggle('active');
+                }
+            }
+
+            // Function to add user message
+            function addUserMessage(message) {
+                const userMessageDiv = document.createElement('div');
+                userMessageDiv.className = 'message user-message';
+                userMessageDiv.textContent = message;
+                chatMessages.appendChild(userMessageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            // Function to add bot message with suggested questions
+            function addBotMessage(message, suggestions = []) {
+                const botMessageDiv = document.createElement('div');
+                botMessageDiv.className = 'message bot-message';
+                botMessageDiv.textContent = message;
+                chatMessages.appendChild(botMessageDiv);
+
+                // Add suggested questions if provided
+                if (suggestions && suggestions.length > 0) {
+                    const suggestionsDiv = document.createElement('div');
+                    suggestionsDiv.className = 'suggested-questions';
+
+                    suggestions.forEach(suggestion => {
+                        const suggestionBtn = document.createElement('button');
+                        suggestionBtn.className = 'suggested-question';
+                        suggestionBtn.textContent = suggestion;
+                        suggestionsDiv.appendChild(suggestionBtn);
+                    });
+
+                    chatMessages.appendChild(suggestionsDiv);
+                }
+
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            // Function to simulate typing
+            function simulateTyping(callback) {
+                typingIndicator.classList.add('active');
+
+                setTimeout(() => {
+                    typingIndicator.classList.remove('active');
+                    callback();
+                }, 1500);
+            }
+
+            // Function to handle sending a message
+            function sendMessage() {
+                const message = chatInput.value.trim();
+                if (message === '') return;
+
+                // Remove any existing suggested questions
+                const existingSuggestions = document.querySelector('.suggested-questions');
+                if (existingSuggestions) {
+                    existingSuggestions.remove();
+                }
+
+                // Add user message to chat
+                addUserMessage(message);
+                chatInput.value = '';
+
+                // Process message and get response
+                const responseObj = getResponse(message);
+
+                // Simulate bot typing and response
+                simulateTyping(() => {
+                    addBotMessage(responseObj.text, responseObj.suggestions);
+                });
+            }
+
+            // Function to get response based on user input
+            function getResponse(message) {
+                const lowerMessage = message.toLowerCase();
+
+                // Check for custom keywords
+                for (const keyword in customResponses) {
+                    if (lowerMessage.includes(keyword)) {
+                        return customResponses[keyword];
+                    }
+                }
+
+                // Default responses based on content
+                if (lowerMessage.includes('portfolio')) {
+                    return {
+                        text: "You can manage your portfolios by going to the 'View Portfolios' section in your dashboard. From there, you can add symbols, record transactions, and view detailed analytics.",
+                        suggestions: ["How do I create a portfolio?", "How do I add stocks to my portfolio?"]
+                    };
+                }
+                else if (lowerMessage.includes('symbol') || lowerMessage.includes('stock')) {
+                    return {
+                        text: "To add a symbol to your portfolio, navigate to the portfolio details page and click 'Add Symbol'. You can then search for stocks by their ticker symbol.",
+                        suggestions: ["How do I record transactions?", "How do I track performance?"]
+                    };
+                }
+                else if (lowerMessage.includes('transaction')) {
+                    return {
+                        text: "You can record buy or sell transactions for any symbol in your portfolio. Just go to the symbol details and click 'Add Transaction'. Enter the date, number of shares, and price.",
+                        suggestions: ["How do I edit transactions?", "How do I see transaction history?"]
+                    };
+                }
+                else if (lowerMessage.includes('export')) {
+                    return {
+                        text: "InvestiBuddy allows you to export your portfolio data to Excel. Look for the 'Export' option on the portfolio details page.",
+                        suggestions: ["What data is included in exports?", "Can I import data?"]
+                    };
+                }
+                else {
+                    return {
+                        text: "I'm here to help with any questions about using InvestiBuddy! Feel free to ask about portfolios, investments, or features of the platform.",
+                        suggestions: ["How do I create a portfolio?", "How can I track my investments?", "What is a good investment strategy?"]
+                    };
+                }
+            }
+        });
+    </script>
+</body>
+</html>
