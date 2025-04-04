@@ -27,8 +27,7 @@ Here is a portfolio:
 
 {formatted_portfolio_text}
 
-Suggest for each: Buy, Hold, or Sell, and explain briefly why — considering sector, diversification, and price performance.
-Respond in bullet points.
+Given the following stock holdings in a portfolio with their sectors, share counts, and current value, provide one or two succinct and practical recommendations on portfolio improvement or diversification. Keep it professional and don't use Markdown formatting.
 """
     response = model.generate_content(prompt)
     return response.text.strip()
