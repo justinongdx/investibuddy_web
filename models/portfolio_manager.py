@@ -11,10 +11,20 @@ def get_portfolio_history(symbols, period='1mo', interval='1d'):
     df_list = []
 
     for symbol in symbols:
+        current_shares = 0
+        for txn in symbol.transactions:
+            if txn.transaction_type.lower() == "buy":
+                current_shares += txn.shares
+            elif txn.transaction_type.lower() == "sell":
+                current_shares -= txn.shares
+
+        if current_shares <= 0:
+            continue  # skip symbols with no holdings
+
         try:
             hist = yf.download(symbol.ticker, period=period, interval=interval, progress=False)
             if not hist.empty:
-                hist['Value'] = hist['Close'] * symbol.current_shares
+                hist['Value'] = hist['Close'] * current_shares
                 df_list.append(hist[['Value']].rename(columns={'Value': symbol.ticker}))
         except Exception as e:
             print(f"Error fetching data for {symbol.ticker}: {e}")
@@ -25,6 +35,7 @@ def get_portfolio_history(symbols, period='1mo', interval='1d'):
         return merged_df[['Total']]
     else:
         return pd.DataFrame()
+
 
 class PortfolioManager:
     def __init__(self, db_manager: DatabaseManager):

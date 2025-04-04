@@ -272,19 +272,19 @@ def add_transaction(portfolio_id, symbol_id):
 
 from flask import jsonify
 
+
 @app.route("/portfolio/<int:portfolio_id>/sector-data")
 def sector_data(portfolio_id):
     exposure = portfolio_manager.calculate_sector_exposure(portfolio_id)
 
     if not exposure:
-        return jsonify({"labels": [], "values": []})
+        return jsonify({"labels": [], "values": [], "dollars": []})
 
     labels = list(exposure.keys())
-    values = [round(data["percentage"], 2) for data in exposure.values()]
+    percentages = [round(data["percentage"], 2) for data in exposure.values()]
+    dollars = [round(data["value"], 2) for data in exposure.values()]
 
-    return jsonify({"labels": labels, "values": values})
-
-
+    return jsonify({"labels": labels, "values": percentages, "dollars": dollars})
 
 @app.route('/portfolio/<int:portfolio_id>/export')
 def export_portfolio_excel(portfolio_id):
