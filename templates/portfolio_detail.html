@@ -312,45 +312,7 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 
 
-<script>function loadSectorChart() {
-  fetch(`/portfolio/{{ portfolio.portfolio_id }}/sector-data`)
-    .then(response => response.json())
-    .then(data => {
-      const ctx = document.getElementById('sectorChart').getContext('2d');
-
-      new Chart(ctx, {
-        type: 'pie',
-        data: {
-          labels: data.labels,
-          datasets: [{
-            label: 'Sector Allocation',
-            data: data.dollars,  // Raw dollar values
-            backgroundColor: [
-              '#4e73df', '#1cc88a', '#36b9cc', '#f6c23e',
-              '#e74a3b', '#858796', '#fd7e14', '#20c997'
-            ]
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: { position: 'right' },
-            tooltip: {
-              callbacks: {
-                label: function (context) {
-                  const label = context.label || '';
-                  const value = context.raw; // Dollar amount
-                  const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                  const percentage = (value / total) * 100;
-                  return `${label}: $${value.toFixed(2)} (${percentage.toFixed(2)}%)`;
-                }
-              }
-            }
-          }
-        }
-      });
-    });
-}
+<script>
 
 function loadSectorChart() {
   fetch(`/portfolio/{{ portfolio.portfolio_id }}/sector-data`)
@@ -364,7 +326,7 @@ function loadSectorChart() {
           labels: data.labels,
           datasets: [{
             label: 'Sector Allocation',
-            data: data.dollars,  // Raw dollar values
+            data: data.dollars, // use actual dollar values in chart
             backgroundColor: [
               '#4e73df', '#1cc88a', '#36b9cc', '#f6c23e',
               '#e74a3b', '#858796', '#fd7e14', '#20c997'
@@ -374,14 +336,15 @@ function loadSectorChart() {
         options: {
           responsive: true,
           plugins: {
-            legend: { position: 'right' },
+            legend: { position: 'right' , onClick: null},
             tooltip: {
               callbacks: {
                 label: function (context) {
                   const label = context.label || '';
-                  const value = context.raw; // Dollar amount
-                  const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                  const percentage = (value / total) * 100;
+                  const value = context.raw || 0;
+                  const dataset = context.dataset.data;
+                  const total = dataset.reduce((acc, val) => acc + val, 0);
+                  const percentage = total > 0 ? (value / total) * 100 : 0;
                   return `${label}: $${value.toFixed(2)} (${percentage.toFixed(2)}%)`;
                 }
               }
@@ -391,6 +354,7 @@ function loadSectorChart() {
       });
     });
 }
+
 
   document.addEventListener("DOMContentLoaded", () => loadSectorChart());
 </script>
