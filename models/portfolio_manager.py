@@ -111,8 +111,7 @@ class PortfolioManager:
         symbols = self.get_portfolio_symbols(portfolio_id)
         exposure = {}
 
-        # Calculate total portfolio value by summing symbol metrics
-        total_value = 0
+        total_value = 0 # Calculate total portfolio value by summing symbol metrics
         symbol_metrics = {}
 
         for s in symbols:
