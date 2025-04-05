@@ -24,12 +24,12 @@
           <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-3">
             <div class="d-flex justify-content-center w-100 mb-2 mb-md-0">
               <div class="btn-group" role="group">
-                <button class="btn btn-sm btn-outline-primary" onclick="loadChart('1d')">1D</button>
-                <button class="btn btn-sm btn-outline-primary" onclick="loadChart('5d')">1W</button>
-                <button class="btn btn-sm btn-outline-primary" onclick="loadChart('1mo')">1M</button>
-                <button class="btn btn-sm btn-outline-primary" onclick="loadChart('ytd')">YTD</button>
-                <button class="btn btn-sm btn-outline-primary" onclick="loadChart('1y')">1Y</button>
-                <button class="btn btn-sm btn-outline-primary" onclick="loadChart('max')">Max</button>
+                  <button class="btn btn-sm btn-outline-primary period-btn" onclick="loadChart('1d', this)">1D</button>
+                  <button class="btn btn-sm btn-outline-primary period-btn" onclick="loadChart('5d', this)">1W</button>
+                  <button class="btn btn-sm btn-outline-primary period-btn" onclick="loadChart('1mo', this)">1M</button>
+                  <button class="btn btn-sm btn-outline-primary period-btn" onclick="loadChart('ytd', this)">YTD</button>
+                  <button class="btn btn-sm btn-outline-primary period-btn" onclick="loadChart('1y', this)">1Y</button>
+                  <button class="btn btn-sm btn-outline-primary period-btn" onclick="loadChart('max', this)">Max</button>
               </div>
             </div>
           </div>
@@ -181,48 +181,52 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-  let chartInstance;
+let chartInstance;
 
-  function loadChart(period) {
-    fetch(`/portfolio/{{ portfolio.portfolio_id }}/performance-data?period=${period}`)
-      .then(response => response.json())
-      .then(data => {
-        const ctx = document.getElementById('portfolioChart').getContext('2d');
-        if (chartInstance) chartInstance.destroy();
+function loadChart(period, btn = null) {
+  document.querySelectorAll('.period-btn').forEach(button => {
+    button.classList.remove('btn-primary');
+    button.classList.add('btn-outline-primary');
+  });
 
-        const dataset = {
-          label: 'Portfolio Value ($)',
-          data: data.data,
-          borderColor: 'rgba(75, 192, 192, 1)',
-          fill: false,
-          tension: 0.1
-        };
-
-        chartInstance = new Chart(ctx, {
-          type: 'line',
-          data: { labels: data.labels, datasets: [dataset] },
-          options: {
-            responsive: true,
-            scales: {
-              x: { title: { display: true, text: 'Date' } },
-              y: { title: { display: true, text: 'Value ($)' } }
-            },
-            plugins: {
-              tooltip: {
-                callbacks: {
-                  label: function(context) {
-                    const label = context.dataset.label || '';
-                    const value = context.parsed.y;
-                    return `${label}: $${value.toFixed(2)}`;
-                  }
-                }
-              }
-            }
-          }
-        });
-      });
+  if (btn) {
+    btn.classList.remove('btn-outline-primary');
+    btn.classList.add('btn-primary');
   }
-  document.addEventListener("DOMContentLoaded", () => loadChart("1mo"));
+
+  fetch(`/portfolio/{{ portfolio.portfolio_id }}/performance-data?period=${period}`)
+    .then(response => response.json())
+    .then(data => {
+      const ctx = document.getElementById('portfolioChart').getContext('2d');
+      if (chartInstance) chartInstance.destroy();
+
+      const dataset = {
+        label: 'Portfolio Value ($)',
+        data: data.data,
+        borderColor: 'rgba(75, 192, 192, 1)',
+        fill: false,
+        tension: 0.1
+      };
+
+      chartInstance = new Chart(ctx, {
+        type: 'line',
+        data: { labels: data.labels, datasets: [dataset] },
+        options: {
+          responsive: true,
+          scales: {
+            x: { title: { display: true, text: 'Date' } },
+            y: { title: { display: true, text: 'Value ($)' } }
+          }
+        }
+      });
+    });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const defaultBtn = document.querySelector('.period-btn[onclick*="1mo"]');
+  loadChart("1mo", defaultBtn);
+});
+
 </script>
 
 
