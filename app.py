@@ -364,15 +364,26 @@ def add_transaction(portfolio_id, symbol_id):
 @app.route("/portfolio/<int:portfolio_id>/sector-data")
 def sector_data(portfolio_id):
     exposure = portfolio_manager.calculate_sector_exposure(portfolio_id)
-
-    if not exposure:
+    if not exposure: #return empty JSON if no exposure found
         return jsonify({"labels": [], "values": [], "dollars": []})
 
-    labels = list(exposure.keys())
+    labels = list(exposure.keys()) #sector names (eg technology)
     percentages = [round(data["percentage"], 2) for data in exposure.values()]
     dollars = [round(data["value"], 2) for data in exposure.values()]
-
     return jsonify({"labels": labels, "values": percentages, "dollars": dollars})
+# send processed data back as JSON for Chart.js (Javascript) to create the pie chart
+
+@app.route('/portfolio/<int:portfolio_id>/performance-data')
+def portfolio_performance_data(portfolio_id):
+    period = request.args.get('period', '1mo') # to get query parameter from the URL, if no period, default to 1 month
+    symbols = portfolio_manager.get_portfolio_symbols(portfolio_id)
+    df = get_portfolio_history(symbols, period=period)
+    if df.empty: #return empty JSON if currently no symbols in portfolio
+        return {"labels": [], "data": []}
+
+    labels = df.index.strftime('%Y-%m-%d').tolist()
+    data = df['Total'].round(2).tolist()
+    return {"labels": labels, "data": data}
 
 @app.route('/portfolio/<int:portfolio_id>/export')
 def export_portfolio_excel(portfolio_id):
@@ -479,19 +490,6 @@ def recommendations(portfolio_id):
         sentiment_filter="",
         filtered_news=news_data
     )
-
-@app.route('/portfolio/<int:portfolio_id>/performance-data')
-def portfolio_performance_data(portfolio_id):
-    period = request.args.get('period', '1mo')
-    symbols = portfolio_manager.get_portfolio_symbols(portfolio_id)
-    df = get_portfolio_history(symbols, period=period)
-
-    if df.empty:
-        return {"labels": [], "data": []}
-
-    labels = df.index.strftime('%Y-%m-%d').tolist()
-    data = df['Total'].round(2).tolist()
-    return {"labels": labels, "data": data}
 
 @app.route('/portfolio/<int:portfolio_id>/delete', methods=['POST'])
 def delete_portfolio(portfolio_id):
