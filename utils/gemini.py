@@ -21,13 +21,22 @@ def format_portfolio_for_gemini(symbol_metrics):
 
 def get_gemini_recommendation(formatted_portfolio_text):
     prompt = f"""
-You're a helpful financial assistant.
+You are an intelligent and professional financial assistant.
 
-Here is a portfolio:
+A user has the following stock portfolio:
 
 {formatted_portfolio_text}
 
-Given the following stock holdings in a portfolio with their sectors, share counts, and current value, provide one or two succinct and practical recommendations on portfolio improvement or diversification. Keep it professional and don't use Markdown formatting.
+Your task:
+- Analyse the portfolio for sector concentration, lack of diversification, or overweight positions.
+- Provide 1–2 actionable, concise suggestions to help balance or strengthen the portfolio.
+- If diversification is lacking, suggest specific sectors or asset classes the user might consider.
+- Use a clear, formal tone suitable for a finance dashboard.
+- Do NOT use markdown, emojis, or any special formatting — just plain text.
+
+Output should be under 100 words and easy to display inside a UI card.
 """
+
     response = model.generate_content(prompt)
     return response.text.strip()
+
