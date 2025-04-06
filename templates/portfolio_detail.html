@@ -10,7 +10,7 @@
       <h2 class="fw-bold mb-0">{{ portfolio.name }}</h2>
     </div>
     <div>
-      <a href="{{ url_for('add_symbol', portfolio_id=portfolio.portfolio_id) }}" class="btn btn-success me-2">➕ Add Symbol</a>
+      <a href="{{ url_for('add_symbol', portfolio_id=portfolio.portfolio_id) }}" class="btn btn-success me-2">✚ Add Symbol</a>
       <a href="{{ url_for('export_portfolio_excel', portfolio_id=portfolio.portfolio_id) }}" class="btn btn-outline-secondary me-2">📥 Export to Excel</a>
       <a href="{{ url_for('recommendations', portfolio_id=portfolio.portfolio_id) }}" class="btn btn-warning">🤖 Gemini Recommendations</a>
     </div>
@@ -24,20 +24,20 @@
           <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-3">
             <div class="d-flex justify-content-center w-100 mb-2 mb-md-0">
               <div class="btn-group" role="group">
-                <button class="btn btn-sm btn-outline-primary" onclick="loadChart('1d')">1D</button>
-                <button class="btn btn-sm btn-outline-primary" onclick="loadChart('5d')">1W</button>
-                <button class="btn btn-sm btn-outline-primary" onclick="loadChart('1mo')">1M</button>
-                <button class="btn btn-sm btn-outline-primary" onclick="loadChart('ytd')">YTD</button>
-                <button class="btn btn-sm btn-outline-primary" onclick="loadChart('1y')">1Y</button>
-                <button class="btn btn-sm btn-outline-primary" onclick="loadChart('max')">Max</button>
+                  <button class="btn btn-sm btn-outline-primary period-btn" onclick="loadChart('1d', this)">1D</button>
+                  <button class="btn btn-sm btn-outline-primary period-btn" onclick="loadChart('5d', this)">1W</button>
+                  <button class="btn btn-sm btn-outline-primary period-btn" onclick="loadChart('1mo', this)">1M</button>
+                  <button class="btn btn-sm btn-outline-primary period-btn" onclick="loadChart('ytd', this)">YTD</button>
+                  <button class="btn btn-sm btn-outline-primary period-btn" onclick="loadChart('1y', this)">1Y</button>
+                  <button class="btn btn-sm btn-outline-primary period-btn" onclick="loadChart('max', this)">Max</button>
               </div>
             </div>
-            <div class="d-flex align-items-center">
-              <label class="form-check-label me-2">Show %</label>
-              <input type="checkbox" class="form-check-input" id="showPercentage" />
-            </div>
           </div>
-          <canvas id="portfolioChart" height="200"></canvas>
+          {% if symbols | selectattr('current_shares', 'gt', 0) | list %}
+              <canvas id="portfolioChart" height="200"></canvas>
+          {% else %}
+              <p class="text-muted text-center mt-4">No chart data available — add transactions to get started.</p>
+          {% endif %}
         </div>
       </div>
     </div>
@@ -76,7 +76,10 @@
   {% if symbols %}
   <div class="card mb-4">
     <div class="card-body">
-      <h5 class="card-title">💼 Holdings</h5>
+      <div class="d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">💼 Holdings</h5>
+        <a href="{{ url_for('add_symbol', portfolio_id=portfolio.portfolio_id) }}" class="btn btn-success btn-sm">✚ Add Symbol</a>
+      </div>
       <table class="table table-striped mt-3">
         <thead class="table-dark">
           <tr>
@@ -178,89 +181,180 @@
   {% endif %}
 </div>
 
+<hr class="my-5">
+<h4>🗞️ Latest News & Sentiment</h4>
+
+<!-- Search and Filter Row -->
+<form method="get" class="row g-3 mt-3 mb-4">
+  <div class="col-md-4">
+    <input type="text" name="search" value="{{ request.args.get('search', '') }}" class="form-control" placeholder="🔍 Search by Ticker (e.g. AAPL)">
+  </div>
+
+  <div class="col-md-8 d-flex justify-content-start align-items-center">
+    <span class="me-2">Filter by Sentiment:</span>
+    <a href="?sentiment=positive" class="btn btn-sm btn-outline-success me-2 {% if request.args.get('sentiment') == 'positive' %}active{% endif %}">😊 Positive</a>
+    <a href="?sentiment=neutral" class="btn btn-sm btn-outline-secondary me-2 {% if request.args.get('sentiment') == 'neutral' %}active{% endif %}">😐 Neutral</a>
+    <a href="?sentiment=negative" class="btn btn-sm btn-outline-danger me-2 {% if request.args.get('sentiment') == 'negative' %}active{% endif %}">😟 Negative</a>
+    <a href="/portfolio/{{ portfolio.portfolio_id }}" class="btn btn-sm btn-outline-dark">🔄 Reset</a>
+  </div>
+</form>
+
+<!-- Display Summary Cards for Each Ticker -->
+<div id="sentimentSection">
+{% for ticker, articles in filtered_news.items() %}
+  <div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <strong>{{ ticker }}</strong>
+      <a href="{{ url_for('symbol_sentiment', portfolio_id=portfolio.portfolio_id, ticker=ticker) }}" class="btn btn-sm btn-outline-info">📊 View In-Depth Sentiment</a>
+    </div>
+    <div class="card-body">
+
+      <!-- Navigation Tabs -->
+      <ul class="nav nav-tabs mb-3" id="tabs-{{ ticker }}">
+        <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#news-{{ ticker }}">📰 News</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#sentiment-{{ ticker }}">📊 Sentiment</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#wordcloud-{{ ticker }}">☁️ WordCloud</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#fundamentals-{{ ticker }}">📈 Fundamentals</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#about-{{ ticker }}">🏢 About</button></li>
+      </ul>
+<!-- Tab Content -->
+      <div class="tab-content">
+        <div class="tab-pane fade show active" id="news-{{ ticker }}">
+          {% for article in articles %}
+          <div class="card mb-2">
+            <div class="card-body">
+              <h6>{{ article.title }}</h6>
+              <p class="text-muted small mb-1">🗓 {{ article.publishedAt.split('T')[0] }} | 💬 {{ article.message_type }} | {{ article.sentiment_label }}</p>
+              <p>{{ article.description }}</p>
+              <a href="{{ article.url }}" target="_blank" class="btn btn-sm btn-outline-primary">Read</a>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="tab-pane fade" id="sentiment-{{ ticker }}">
+          <img src="data:image/png;base64,{{ sentiment_histograms[ticker] }}" class="img-fluid" alt="Histogram">
+        </div>
+
+        <div class="tab-pane fade" id="wordcloud-{{ ticker }}">
+          <img src="/static/wordcloud_{{ ticker }}.png" class="img-fluid" alt="WordCloud">
+        </div>
+
+        <div class="tab-pane fade" id="fundamentals-{{ ticker }}">
+          {% set f = fundamentals[ticker] %}
+          <ul class="list-group">
+            <li class="list-group-item">Market Cap: {{ f.marketCap }}</li>
+            <li class="list-group-item">PE Ratio: {{ f.trailingPE }}</li>
+            <li class="list-group-item">Forward PE: {{ f.forwardPE }}</li>
+            <li class="list-group-item">Book Value: {{ f.bookValue }}</li>
+            <li class="list-group-item">EBITDA: {{ f.ebitda }}</li>
+          </ul>
+        </div>
+
+        <div class="tab-pane fade" id="about-{{ ticker }}">
+          <p style="white-space: pre-wrap">{{ company_info[ticker] }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endfor %}
+</div>
+
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-  let chartInstance;
-  function loadChart(period) {
-    fetch(`/portfolio/{{ portfolio.portfolio_id }}/performance-data?period=${period}`)
-      .then(response => response.json())
-      .then(data => {
-        const ctx = document.getElementById('portfolioChart').getContext('2d');
-        if (chartInstance) chartInstance.destroy();
+let chartInstance;
 
-        const showPercentage = document.getElementById("showPercentage").checked;
-        const dataset = {
-          label: showPercentage ? 'Portfolio Change (%)' : 'Portfolio Value ($)',
-          data: showPercentage ? data.percentage_data : data.data,
-          borderColor: 'rgba(75, 192, 192, 1)',
-          fill: false,
-          tension: 0.1
-        };
+function loadChart(period, btn = null) {
+  document.querySelectorAll('.period-btn').forEach(button => {
+    button.classList.remove('btn-primary');
+    button.classList.add('btn-outline-primary');
+  });
 
-        chartInstance = new Chart(ctx, {
-          type: 'line',
-          data: { labels: data.labels, datasets: [dataset] },
-          options: {
-            responsive: true,
-            scales: {
-              x: { title: { display: true, text: 'Date' } },
-              y: { title: { display: true, text: showPercentage ? 'Change (%)' : 'Value ($)' } }
-            },
-            plugins: {
-              tooltip: {
-                callbacks: {
-                  label: function(context) {
-                    const label = context.dataset.label || '';
-                    const value = context.parsed.y;
-                    return `${label}: ${showPercentage ? value.toFixed(2) + '%' : '$' + value.toFixed(2)}`;
-                  }
-                }
-              }
-            }
-          }
-        });
-      });
+  if (btn) {
+    btn.classList.remove('btn-outline-primary');
+    btn.classList.add('btn-primary');
   }
-  document.addEventListener("DOMContentLoaded", () => loadChart("1mo"));
+
+  fetch(`/portfolio/{{ portfolio.portfolio_id }}/performance-data?period=${period}`)
+    .then(response => response.json())
+    .then(data => {
+      const ctx = document.getElementById('portfolioChart').getContext('2d');
+      if (chartInstance) chartInstance.destroy();
+
+      const dataset = {
+        label: 'Portfolio Value ($)',
+        data: data.data,
+        borderColor: 'rgba(75, 192, 192, 1)',
+        fill: false,
+        tension: 0.1
+      };
+
+      chartInstance = new Chart(ctx, {
+        type: 'line',
+        data: { labels: data.labels, datasets: [dataset] },
+        options: {
+          responsive: true,
+          scales: {
+            x: { title: { display: true, text: 'Date' } },
+            y: { title: { display: true, text: 'Value ($)' } }
+          }
+        }
+      });
+    });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const defaultBtn = document.querySelector('.period-btn[onclick*="1mo"]');
+  loadChart("1mo", defaultBtn);
+});
+
 </script>
 
+
 <script>
-  function loadSectorChart() {
-    fetch(`/portfolio/{{ portfolio.portfolio_id }}/sector-data`)
-      .then(response => response.json())
-      .then(data => {
-        const ctx = document.getElementById('sectorChart').getContext('2d');
-        new Chart(ctx, {
-          type: 'pie',
-          data: {
-            labels: data.labels,
-            datasets: [{
-              label: 'Sector Allocation (%)',
-              data: data.values,
-              backgroundColor: [
-                '#4e73df', '#1cc88a', '#36b9cc', '#f6c23e',
-                '#e74a3b', '#858796', '#fd7e14', '#20c997'
-              ]
-            }]
-          },
-          options: {
-            responsive: true,
-            plugins: {
-              legend: { position: 'right' },
-              tooltip: {
-                callbacks: {
-                  label: function(context) {
-                    const label = context.label || '';
-                    const value = context.parsed;
-                    return `${label}: ${value.toFixed(2)}%`;
-                  }
+
+function loadSectorChart() {
+  fetch(`/portfolio/{{ portfolio.portfolio_id }}/sector-data`)
+    .then(response => response.json())
+    .then(data => {
+      const ctx = document.getElementById('sectorChart').getContext('2d');
+
+      new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: data.labels,
+          datasets: [{
+            label: 'Sector Allocation',
+            data: data.dollars, // use actual dollar values in chart
+            backgroundColor: [
+              '#4e73df', '#1cc88a', '#36b9cc', '#f6c23e',
+              '#e74a3b', '#858796', '#fd7e14', '#20c997'
+            ]
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: 'right' , onClick: null},
+            tooltip: {
+              callbacks: {
+                label: function (context) {
+                  const label = context.label || '';
+                  const value = context.raw || 0;
+                  const dataset = context.dataset.data;
+                  const total = dataset.reduce((acc, val) => acc + val, 0);
+                  const percentage = total > 0 ? (value / total) * 100 : 0;
+                  return `${label}: $${value.toFixed(2)} (${percentage.toFixed(2)}%)`;
                 }
               }
             }
           }
-        });
+        }
       });
-  }
+    });
+}
+
 
   document.addEventListener("DOMContentLoaded", () => loadSectorChart());
 </script>
@@ -285,3 +379,4 @@
   });
 </script>
 {% endblock %}
+

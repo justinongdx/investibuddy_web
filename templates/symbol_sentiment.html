@@ -1,0 +1,68 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+<div class="mt-3 d-flex justify-content-between align-items-center">
+    <h3>📢 In-Depth Sentiment Analysis for {{ ticker }}</h3>
+    <a href="{{ url_for('portfolio_detail', portfolio_id=portfolio_id) }}" class="btn btn-outline-secondary float-end">Back to Portfolio</a>
+  </div>  
+
+  <hr>
+
+  <div class="mt-4">
+    <h4>📰 Top News Headlines</h4>
+    {% for article in headlines %}
+      <div class="card mb-3 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">{{ article.title }}</h5>
+          <p class="card-text">{{ article.description }}</p>
+          <p class="mb-1">
+            <strong>Sentiment:</strong> {{ article.sentiment_label }} |
+            <strong>Type:</strong> {{ article.message_type }}
+          </p>
+          <p class="text-muted small">
+            🗓️ {{ article.publishedAt.split('T')[0] }}
+          </p>
+          <a href="{{ article.url }}" target="_blank" class="btn btn-sm btn-outline-primary">Read Full Article</a>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <hr>
+
+  <div class="row mt-4">
+    <div class="col-md-6">
+      <h4>📊 Emotional vs Informative Messages</h4>
+      <img src="data:image/png;base64,{{ histogram_image }}" class="img-fluid border rounded shadow-sm" alt="Histogram">
+    </div>
+    <div class="col-md-6">
+      <h4>☁️ WordCloud</h4>
+      <img src="/static/wordcloud_{{ ticker }}.png" class="img-fluid border rounded shadow-sm" alt="WordCloud">
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="mt-4">
+    <h4>📈 Company Fundamentals</h4>
+    <ul class="list-group">
+      <li class="list-group-item">Trailing P/E: {{ financials.trailingPE | round(2) if financials.trailingPE is number else financials.trailingPE }}</li>
+      <li class="list-group-item">Forward P/E: {{ financials.forwardPE | round(2) if financials.forwardPE is number else financials.forwardPE }}</li>
+      <li class="list-group-item">Book Value: ${{ financials.bookValue }}</li>
+      <li class="list-group-item">EBITDA: ${{ financials.ebitda | replace('000000000', 'B') | replace('000000', 'M') }}</li>
+      <li class="list-group-item">Market Cap: ${{ financials.marketCap | replace('000000000', 'B') | replace('000000', 'M') }}</li>
+    </ul>
+  </div>
+
+  <hr>
+
+  <div class="mt-4">
+    <h4>🏢 Company Overview</h4>
+    <div class="p-3 border rounded bg-light" style="line-height: 1.6; white-space: pre-wrap;">
+      {{ about_text }}
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

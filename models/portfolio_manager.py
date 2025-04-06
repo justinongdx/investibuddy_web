@@ -7,25 +7,6 @@ from models.entities import Symbol
 import yfinance as yf
 import pandas as pd
 
-def get_portfolio_history(symbols, period='1mo', interval='1d'):
-    df_list = []
-
-    for symbol in symbols:
-        try:
-            hist = yf.download(symbol.ticker, period=period, interval=interval, progress=False)
-            if not hist.empty:
-                hist['Value'] = hist['Close'] * symbol.current_shares
-                df_list.append(hist[['Value']].rename(columns={'Value': symbol.ticker}))
-        except Exception as e:
-            print(f"Error fetching data for {symbol.ticker}: {e}")
-
-    if df_list:
-        merged_df = pd.concat(df_list, axis=1).fillna(0)
-        merged_df['Total'] = merged_df.sum(axis=1)
-        return merged_df[['Total']]
-    else:
-        return pd.DataFrame()
-
 class PortfolioManager:
     def __init__(self, db_manager: DatabaseManager):
         self.db_manager = db_manager
@@ -100,8 +81,7 @@ class PortfolioManager:
         symbols = self.get_portfolio_symbols(portfolio_id)
         exposure = {}
 
-        # Calculate total portfolio value by summing symbol metrics
-        total_value = 0
+        total_value = 0 # Calculate total portfolio value by summing symbol metrics
         symbol_metrics = {}
 
         for s in symbols:
