@@ -59,7 +59,7 @@ pillow==11.1.0
 platformdirs==4.3.7
 pluggy==1.5.0
 proto-plus==1.26.1
-protobuf==4.25.3
+protobuf>=4.26.1,<6.0dev
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
 pydantic==2.11.1
