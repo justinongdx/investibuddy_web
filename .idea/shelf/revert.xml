@@ -1,0 +1,9 @@
+<changelist name="revert" date="1743771973966" recycled="false">
+  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/revert/shelved.patch" />
+  <option name="DESCRIPTION" value="revert" />
+  <binary>
+    <option name="BEFORE_PATH" value="portfolio_manager.db" />
+    <option name="AFTER_PATH" value="portfolio_manager.db" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/revert/portfolio_manager.db" />
+  </binary>
+</changelist>

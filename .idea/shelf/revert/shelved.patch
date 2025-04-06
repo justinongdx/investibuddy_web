@@ -1,0 +1,285 @@
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"AutoImportSettings\">\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\n  </component>\n  <component name=\"ChangeListManager\">\n    <list default=\"true\" id=\"e1a8e9de-b7af-4b2f-b553-27f796069872\" name=\"Changes\" comment=\"Added delete portfolio feature\">\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/app.py\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/app.py\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/models/portfolio_manager.py\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/models/portfolio_manager.py\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/portfolio_manager.db\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/portfolio_manager.db\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/templates/portfolio_detail.html\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/templates/portfolio_detail.html\" afterDir=\"false\" />\n    </list>\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\n  </component>\n  <component name=\"FileTemplateManagerImpl\">\n    <option name=\"RECENT_TEMPLATES\">\n      <list>\n        <option value=\"Flask Main\" />\n        <option value=\"Python Script\" />\n        <option value=\"HTML File\" />\n      </list>\n    </option>\n  </component>\n  <component name=\"FlaskConsoleOptions\" custom-start-script=\"import sys; print('Python %s on %s' % (sys.version, sys.platform)); sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;from flask.cli import ScriptInfo, NoAppException&#10;for module in [&quot;main.py&quot;, &quot;wsgi.py&quot;, &quot;app.py&quot;]:&#10;    try: locals().update(ScriptInfo(app_import_path=module, create_app=None).load_app().make_shell_context()); print(&quot;\\nFlask App: %s&quot; % app.import_name); break&#10;    except NoAppException: pass\">\n    <envs>\n      <env key=\"FLASK_APP\" value=\"app\" />\n    </envs>\n    <option name=\"myCustomStartScript\" value=\"import sys; print('Python %s on %s' % (sys.version, sys.platform)); sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;from flask.cli import ScriptInfo, NoAppException&#10;for module in [&quot;main.py&quot;, &quot;wsgi.py&quot;, &quot;app.py&quot;]:&#10;    try: locals().update(ScriptInfo(app_import_path=module, create_app=None).load_app().make_shell_context()); print(&quot;\\nFlask App: %s&quot; % app.import_name); break&#10;    except NoAppException: pass\" />\n    <option name=\"myEnvs\">\n      <map>\n        <entry key=\"FLASK_APP\" value=\"app\" />\n      </map>\n    </option>\n  </component>\n  <component name=\"Git.Settings\">\n    <option name=\"RECENT_BRANCH_BY_REPOSITORY\">\n      <map>\n        <entry key=\"$PROJECT_DIR$\" value=\"master\" />\n      </map>\n    </option>\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\n  </component>\n  <component name=\"GitHubPullRequestSearchHistory\">{\n  &quot;lastFilter&quot;: {\n    &quot;state&quot;: &quot;OPEN&quot;,\n    &quot;assignee&quot;: &quot;anthonykhj&quot;\n  }\n}</component>\n  <component name=\"GithubPullRequestsUISettings\">{\n  &quot;selectedUrlAndAccountId&quot;: {\n    &quot;url&quot;: &quot;https://github.com/justinongdx/investibuddy_web.git&quot;,\n    &quot;accountId&quot;: &quot;1c1a1c74-bb14-487a-a92c-923cb98dc5f0&quot;\n  }\n}</component>\n  <component name=\"ProjectColorInfo\">{\n  &quot;associatedIndex&quot;: 0\n}</component>\n  <component name=\"ProjectId\" id=\"2und7xYRz6h43MEmsveUrhRRzK2\" />\n  <component name=\"ProjectLevelVcsManager\" settingsEditedManually=\"true\">\n    <ConfirmationsSetting value=\"2\" id=\"Add\" />\n  </component>\n  <component name=\"ProjectViewState\">\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\n    <option name=\"showLibraryContents\" value=\"true\" />\n  </component>\n  <component name=\"PropertiesComponent\">{\n  &quot;keyToString&quot;: {\n    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,\n    &quot;Flask server.Flask (app.py).executor&quot;: &quot;Run&quot;,\n    &quot;Flask server.investibuddy_web.executor&quot;: &quot;Run&quot;,\n    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,\n    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,\n    &quot;git-widget-placeholder&quot;: &quot;master&quot;,\n    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,\n    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,\n    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,\n    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,\n    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,\n    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,\n    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,\n    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;\n  }\n}</component>\n  <component name=\"RunManager\">\n    <configuration name=\"investibuddy_web\" type=\"Python.FlaskServer\">\n      <option name=\"flaskDebug\" value=\"true\" />\n      <module name=\"investibuddy_web\" />\n      <option name=\"target\" value=\"$PROJECT_DIR$/app.py\" />\n      <option name=\"targetType\" value=\"PATH\" />\n      <option name=\"ENV_FILES\" value=\"\" />\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\n      <option name=\"PARENT_ENVS\" value=\"true\" />\n      <option name=\"SDK_HOME\" value=\"\" />\n      <option name=\"WORKING_DIRECTORY\" value=\"\" />\n      <option name=\"IS_MODULE_SDK\" value=\"false\" />\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\n      <EXTENSION ID=\"PythonCoverageRunConfigurationExtension\" runner=\"coverage.py\" />\n      <option name=\"launchJavascriptDebuger\" value=\"false\" />\n      <method v=\"2\" />\n    </configuration>\n  </component>\n  <component name=\"SharedIndexes\">\n    <attachedChunks>\n      <set>\n        <option value=\"bundled-js-predefined-d6986cc7102b-deb605915726-JavaScript-PY-243.22562.220\" />\n        <option value=\"bundled-python-sdk-0fc6c617c4bd-9a18a617cbe4-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-243.22562.220\" />\n      </set>\n    </attachedChunks>\n  </component>\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\n  <component name=\"TaskManager\">\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\n      <changelist id=\"e1a8e9de-b7af-4b2f-b553-27f796069872\" name=\"Changes\" comment=\"\" />\n      <created>1742888108861</created>\n      <option name=\"number\" value=\"Default\" />\n      <option name=\"presentableId\" value=\"Default\" />\n      <updated>1742888108861</updated>\n      <workItem from=\"1742888109912\" duration=\"11168000\" />\n      <workItem from=\"1743258247719\" duration=\"6912000\" />\n      <workItem from=\"1743298628157\" duration=\"3409000\" />\n      <workItem from=\"1743394183287\" duration=\"111000\" />\n      <workItem from=\"1743395153670\" duration=\"1301000\" />\n    </task>\n    <task id=\"LOCAL-00001\" summary=\"added an arrow to show/hide transactions under each ticker.\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1743263747780</created>\n      <option name=\"number\" value=\"00001\" />\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1743263747780</updated>\n    </task>\n    <task id=\"LOCAL-00002\" summary=\"Added sector exposure and export into pdf\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1743299893761</created>\n      <option name=\"number\" value=\"00002\" />\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1743299893762</updated>\n    </task>\n    <task id=\"LOCAL-00003\" summary=\"Added delete portfolio feature\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1743696409830</created>\n      <option name=\"number\" value=\"00003\" />\n      <option name=\"presentableId\" value=\"LOCAL-00003\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1743696409830</updated>\n    </task>\n    <option name=\"localTasksCounter\" value=\"4\" />\n    <servers />\n  </component>\n  <component name=\"TypeScriptGeneratedFilesManager\">\n    <option name=\"version\" value=\"3\" />\n  </component>\n  <component name=\"Vcs.Log.Tabs.Properties\">\n    <option name=\"TAB_STATES\">\n      <map>\n        <entry key=\"MAIN\">\n          <value>\n            <State />\n          </value>\n        </entry>\n      </map>\n    </option>\n  </component>\n  <component name=\"VcsManagerConfiguration\">\n    <MESSAGE value=\"added an arrow to show/hide transactions under each ticker.\" />\n    <MESSAGE value=\"Added sector exposure and export into pdf\" />\n    <MESSAGE value=\"Added delete portfolio feature\" />\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"Added delete portfolio feature\" />\n  </component>\n  <component name=\"com.intellij.coverage.CoverageDataManagerImpl\">\n    <SUITE FILE_PATH=\"coverage/Project_2_Clone$investibuddy_web.coverage\" NAME=\"investibuddy_web Coverage Results\" MODIFIED=\"1743700765041\" SOURCE_PROVIDER=\"com.intellij.coverage.DefaultCoverageFileProvider\" RUNNER=\"coverage.py\" COVERAGE_BY_TEST_ENABLED=\"false\" COVERAGE_TRACING_ENABLED=\"false\" WORKING_DIRECTORY=\"\" />\n    <SUITE FILE_PATH=\"coverage/investibuddy_web$investibuddy_web.coverage\" NAME=\"investibuddy_web Coverage Results\" MODIFIED=\"1743395213080\" SOURCE_PROVIDER=\"com.intellij.coverage.DefaultCoverageFileProvider\" RUNNER=\"coverage.py\" COVERAGE_BY_TEST_ENABLED=\"false\" COVERAGE_TRACING_ENABLED=\"false\" WORKING_DIRECTORY=\"\" />\n    <SUITE FILE_PATH=\"coverage/investibuddy_web$Flask__app_py_.coverage\" NAME=\"Flask (app.py) Coverage Results\" MODIFIED=\"1743299552042\" SOURCE_PROVIDER=\"com.intellij.coverage.DefaultCoverageFileProvider\" RUNNER=\"coverage.py\" COVERAGE_BY_TEST_ENABLED=\"false\" COVERAGE_TRACING_ENABLED=\"false\" WORKING_DIRECTORY=\"\" />\n  </component>\n</project>\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 3c1d2264e577e715326569740665e5baba504f06)
++++ b/.idea/workspace.xml	(date 1743771080381)
+@@ -5,11 +5,14 @@
+   </component>
+   <component name="ChangeListManager">
+     <list default="true" id="e1a8e9de-b7af-4b2f-b553-27f796069872" name="Changes" comment="Added delete portfolio feature">
++      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/investibuddy_web.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/investibuddy_web.iml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/models/portfolio_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/portfolio_manager.py" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/portfolio_manager.db" beforeDir="false" afterPath="$PROJECT_DIR$/portfolio_manager.db" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/templates/portfolio_detail.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/portfolio_detail.html" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/utils/gemini.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/gemini.py" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -67,24 +70,25 @@
+     <option name="hideEmptyMiddlePackages" value="true" />
+     <option name="showLibraryContents" value="true" />
+   </component>
+-  <component name="PropertiesComponent">{
+-  &quot;keyToString&quot;: {
+-    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+-    &quot;Flask server.Flask (app.py).executor&quot;: &quot;Run&quot;,
+-    &quot;Flask server.investibuddy_web.executor&quot;: &quot;Run&quot;,
+-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
+-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
++  <component name="PropertiesComponent"><![CDATA[{
++  "keyToString": {
++    "DefaultHtmlFileTemplate": "HTML File",
++    "Flask server.Flask (app.py).executor": "Run",
++    "Flask server.investibuddy_web.executor": "Run",
++    "RunOnceActivity.ShowReadmeOnStart": "true",
++    "RunOnceActivity.git.unshallow": "true",
++    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
++    "git-widget-placeholder": "master",
++    "ignore.virus.scanning.warn.message": "true",
++    "node.js.detected.package.eslint": "true",
++    "node.js.detected.package.tslint": "true",
++    "node.js.selected.package.eslint": "(autodetect)",
++    "node.js.selected.package.tslint": "(autodetect)",
++    "nodejs_package_manager_path": "npm",
++    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
++    "vue.rearranger.settings.migration": "true"
+   }
+-}</component>
++}]]></component>
+   <component name="RunManager">
+     <configuration name="investibuddy_web" type="Python.FlaskServer">
+       <option name="flaskDebug" value="true" />
+@@ -174,8 +178,9 @@
+     <option name="LAST_COMMIT_MESSAGE" value="Added delete portfolio feature" />
+   </component>
+   <component name="com.intellij.coverage.CoverageDataManagerImpl">
++    <SUITE FILE_PATH="coverage/investibuddy_web$test_models.coverage" NAME="test_models Coverage Results" MODIFIED="1743412796564" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils" />
++    <SUITE FILE_PATH="coverage/investibuddy_web$investibuddy_web.coverage" NAME="investibuddy_web Coverage Results" MODIFIED="1743767568358" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+     <SUITE FILE_PATH="coverage/Project_2_Clone$investibuddy_web.coverage" NAME="investibuddy_web Coverage Results" MODIFIED="1743700765041" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+-    <SUITE FILE_PATH="coverage/investibuddy_web$investibuddy_web.coverage" NAME="investibuddy_web Coverage Results" MODIFIED="1743395213080" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+     <SUITE FILE_PATH="coverage/investibuddy_web$Flask__app_py_.coverage" NAME="Flask (app.py) Coverage Results" MODIFIED="1743299552042" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+   </component>
+-</project>
++</project>
+\ No newline at end of file
+Index: .idea/dataSources.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/dataSources.xml b/.idea/dataSources.xml
+new file mode 100644
+--- /dev/null	(date 1743768167119)
++++ b/.idea/dataSources.xml	(date 1743768167119)
+@@ -0,0 +1,12 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
++    <data-source source="LOCAL" name="portfolio_manager" uuid="3f42663f-01bc-432c-87aa-a00b9be48769">
++      <driver-ref>sqlite.xerial</driver-ref>
++      <synchronize>true</synchronize>
++      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
++      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/portfolio_manager.db</jdbc-url>
++      <working-dir>$ProjectFileDir$</working-dir>
++    </data-source>
++  </component>
++</project>
+\ No newline at end of file
+Index: app.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from flask import Flask, render_template, request, redirect, url_for, session, flash, send_file, jsonify\nfrom models.database_manager import DatabaseManager, create_database\nfrom models.user_manager import UserManager\nfrom models.portfolio_manager import PortfolioManager\nfrom io import BytesIO\nfrom models.entities import Portfolio\nfrom dotenv import load_dotenv\nfrom models.portfolio_manager import calculate_portfolio_summary\nfrom models.portfolio_history import get_portfolio_history\nimport pandas as pd\nimport datetime\nimport os\n\napp = Flask(__name__)\napp.secret_key = 'your_secret_key_here'\n\n# Initialise database and managers\ncreate_database()\ndb_manager = DatabaseManager()\nuser_manager = UserManager(db_manager)\nportfolio_manager = PortfolioManager(db_manager)\n\n\n@app.route('/')\ndef home():\n    return render_template('index.html')\n\n\n@app.route('/register', methods=['GET', 'POST'])\ndef register():\n    if request.method == 'POST':\n        username = request.form['username']\n        email = request.form['email']\n        password = request.form['password']\n        risk_tolerance = request.form['risk_tolerance']\n\n        success, message, verification_code = user_manager.register_user(username, email, password, risk_tolerance)\n\n        if success:\n            # Store email in session for verification page\n            session['registration_email'] = email\n            flash(message)\n            return redirect(url_for('verify'))\n        else:\n            flash(f'❌ {message}')\n\n    return render_template('register.html')\n\n\n@app.route('/verify', methods=['GET', 'POST'])\ndef verify():\n    if 'registration_email' not in session:\n        flash('⚠\uFE0F Please register first.')\n        return redirect(url_for('register'))\n\n    if request.method == 'POST':\n        verification_code = request.form['verification_code']\n        email = session['registration_email']\n\n        if user_manager.verify_user(email, verification_code):\n            # Clear registration email from session\n            session.pop('registration_email', None)\n            flash('✅ Verification successful! Please log in.')\n            return redirect(url_for('login'))\n        else:\n            flash('❌ Invalid verification code.')\n\n    return render_template('verify.html')\n\n\n@app.route('/login', methods=['GET', 'POST'])\ndef login():\n    if request.method == 'POST':\n        email = request.form['email']\n        password = request.form['password']\n        result = user_manager.login_user(email, password)\n\n        if result:\n            user_id, username = result\n            session['user_id'] = user_id\n            session['username'] = username\n            flash(f'\uD83D\uDE0A Welcome back, {username}!')\n            return redirect(url_for('dashboard'))\n        else:\n            flash('❌ Invalid email or password, or account not verified.')\n\n    return render_template('login.html')\n\n\n@app.route('/logout')\ndef logout():\n    session.clear()\n    flash('\uD83D\uDC4B You have been logged out.')\n    return redirect(url_for('home'))\n\n@app.route('/dashboard')\ndef dashboard():\n    if 'user_id' not in session:\n        flash('⚠\uFE0F Please log in to continue.')\n        return redirect(url_for('login'))\n\n    return render_template('dashboard.html', username=session['username'])\n\n@app.route('/create-portfolio', methods=['GET', 'POST'])\ndef create_portfolio():\n    if 'user_id' not in session:\n        flash(\"⚠\uFE0F Please log in to create a portfolio.\")\n        return redirect(url_for('login'))\n\n    if request.method == 'POST':\n        name = request.form['name']\n        portfolio_manager.create_portfolio(session['user_id'], name)\n        flash(f\"✅ Portfolio '{name}' created successfully!\")\n        return redirect(url_for('dashboard'))\n\n    return render_template('create_portfolio.html')\n\n@app.route('/view-portfolios')\ndef view_portfolios():\n    if 'user_id' not in session:\n        flash(\"⚠\uFE0F Please log in to view your portfolios.\")\n        return redirect(url_for('login'))\n\n    portfolios = portfolio_manager.get_user_portfolios(session['user_id'])\n    return render_template('view_portfolios.html', portfolios=portfolios)\n\n@app.route('/portfolio/<int:portfolio_id>/add-symbol', methods=['GET', 'POST'])\ndef add_symbol(portfolio_id):\n    if 'user_id' not in session:\n        flash(\"⚠\uFE0F Please log in to add symbols.\")\n        return redirect(url_for('login'))\n\n    rows = db_manager.execute_query(\n        \"SELECT portfolio_id, user_id, name FROM portfolios WHERE portfolio_id = ? AND user_id = ?\",\n        (portfolio_id, session['user_id'])\n    )\n\n    if not rows:\n        flash(\"❌ Portfolio not found or does not belong to you.\")\n        return redirect(url_for('view_portfolios'))\n\n    portfolio = {\n        'portfolio_id': rows[0][0],\n        'user_id': rows[0][1],\n        'name': rows[0][2]\n    }\n\n    if request.method == 'POST':\n        ticker = request.form['ticker'].upper().strip()\n        data = portfolio_manager.yf.fetch_data(ticker)\n\n        if \"error\" in data:\n            flash(data[\"error\"])\n        else:\n            sector = data.get(\"sector\", \"Unknown\")\n            result = portfolio_manager.add_symbol(portfolio_id, ticker, sector)\n            if result:\n                flash(f\"✅ Symbol '{ticker}' added to portfolio!\")\n                return redirect(url_for('portfolio_detail', portfolio_id=portfolio_id))\n            else:\n                flash(f\"⚠\uFE0F Symbol '{ticker}' already exists in this portfolio.\")\n\n    return render_template('add_symbol.html', portfolio=portfolio)\n\n@app.route('/portfolio/<int:portfolio_id>')\ndef portfolio_detail(portfolio_id):\n    if 'user_id' not in session:\n        flash(\"⚠\uFE0F Please log in to view a portfolio.\")\n        return redirect(url_for('login'))\n\n    rows = db_manager.execute_query(\n        \"SELECT portfolio_id, user_id, name FROM portfolios WHERE portfolio_id = ? AND user_id = ?\",\n        (portfolio_id, session['user_id'])\n    )\n\n    if not rows:\n        flash(\"❌ Portfolio not found or does not belong to you.\")\n        return redirect(url_for('view_portfolios'))\n\n    portfolio = {\n        'portfolio_id': rows[0][0],\n        'user_id': rows[0][1],\n        'name': rows[0][2]\n    }\n\n    symbols = portfolio_manager.get_portfolio_symbols(portfolio_id)\n    portfolio_metrics = portfolio_manager.calculate_portfolio_metrics(portfolio_id)\n\n    total_market_value = 0\n    total_cost_all = 0\n\n    for s in symbols:\n        total_shares = 0\n        total_cost = 0\n        transactions = s.transactions if hasattr(s, 'transactions') and s.transactions else []\n\n        for txn in transactions:\n            try:\n                shares = float(txn.shares)\n                price = float(txn.price)\n                if txn.transaction_type == 'Buy':\n                    total_shares += shares\n                    total_cost += shares * price\n                elif txn.transaction_type == 'Sell':\n                    total_shares -= shares\n            except ValueError:\n                flash(f\"❌ Invalid transaction: shares='{txn.shares}', price='{txn.price}' for symbol {s.ticker}\")\n                continue\n\n        last_price = s.current_data.get('last_price', 0) if s.current_data else 0\n        s.current_shares = total_shares\n        s.current_value = round(total_shares * last_price, 2) if total_shares > 0 else 0\n\n        total_market_value += s.current_value\n        total_cost_all += total_cost\n\n    portfolio_summary = {\n        'total_investment': round(portfolio_metrics['total_investment'], 2),\n        'current_value': round(portfolio_metrics['total_current_value'], 2),\n        'unrealised_pnl': round(portfolio_metrics['total_unrealised_pl'], 2),\n        'realised_pnl': round(portfolio_metrics['total_realised_pl'], 2)\n    }\n\n    return render_template('portfolio_detail.html', portfolio=portfolio, symbols=symbols,\n                           portfolio_summary=portfolio_summary)\n\n@app.route('/portfolio/<int:portfolio_id>/symbol/<int:symbol_id>/add-transaction', methods=['GET', 'POST'])\ndef add_transaction(portfolio_id, symbol_id):\n    if 'user_id' not in session:\n        flash(\"⚠\uFE0F Please log in to add transactions.\")\n        return redirect(url_for('login'))\n\n    symbol = portfolio_manager.get_symbol_by_id(symbol_id)\n\n    if not symbol or symbol.portfolio_id != portfolio_id:\n        flash(\"❌ Symbol not found or does not belong to this portfolio.\")\n        return redirect(url_for('portfolio_detail', portfolio_id=portfolio_id))\n\n    if request.method == 'POST':\n        txn_type = request.form['transaction_type']\n        txn_date = request.form['transaction_date']\n        shares = float(request.form['shares'])\n        price_str = request.form['price'].strip()\n        price = float(price_str) if price_str else symbol.current_data['last_price']\n        cost = float(request.form['transaction_cost'])\n\n        # Date cannot be a future date\n        try:\n            txn_date_obj = datetime.datetime.strptime(txn_date, '%Y-%m-%d').date()\n            if txn_date_obj > datetime.date.today():\n                flash(\"❌ Transaction date cannot be in the future.\")\n                return redirect(url_for('add_transaction', portfolio_id=portfolio_id, symbol_id=symbol_id))\n        except ValueError:\n            flash(\"❌ Invalid date format. Please use YYYY-MM-DD.\")\n            return redirect(url_for('add_transaction', portfolio_id=portfolio_id, symbol_id=symbol_id))\n\n        # Prevent selling more shares than currently owned\n        total_bought = sum(txn.shares for txn in symbol.transactions if txn.transaction_type.lower() == 'buy')\n        total_sold = sum(txn.shares for txn in symbol.transactions if txn.transaction_type.lower() == 'sell')\n        current_shares = total_bought - total_sold\n\n        if txn_type.lower() == 'sell' and shares > current_shares:\n            flash(f\"❌ Cannot sell {shares} shares. You only own {current_shares} shares.\")\n            return redirect(url_for('add_transaction', portfolio_id=portfolio_id, symbol_id=symbol_id))\n\n        # Proceed to save transaction\n        portfolio_manager.add_transaction(symbol_id, txn_type, shares, price, cost, txn_date)\n        flash(f\"{txn_type} transaction for {shares} shares of {symbol.ticker} added!\")\n        return redirect(url_for('portfolio_detail', portfolio_id=portfolio_id))\n\n    return render_template('add_transaction.html', symbol=symbol, portfolio_id=portfolio_id)\n\nfrom flask import jsonify\n\n@app.route(\"/portfolio/<int:portfolio_id>/sector-data\")\ndef sector_data(portfolio_id):\n    exposure = portfolio_manager.calculate_sector_exposure(portfolio_id)\n\n    if not exposure:\n        return jsonify({\"labels\": [], \"values\": []})\n\n    labels = list(exposure.keys())\n    values = [round(data[\"percentage\"], 2) for data in exposure.values()]\n\n    return jsonify({\"labels\": labels, \"values\": values})\n\n\n\n@app.route('/portfolio/<int:portfolio_id>/export')\ndef export_portfolio_excel(portfolio_id):\n    symbols = portfolio_manager.get_portfolio_symbols(portfolio_id)\n\n    data = []\n    for s in symbols:\n        metrics = portfolio_manager.calculate_symbol_metrics(s)\n        data.append({\n            \"Ticker\": metrics[\"ticker\"],\n            \"Sector\": metrics[\"sector\"],\n            \"Current Price\": metrics[\"current_price\"],\n            \"Avg Cost\": metrics[\"avg_cost\"],\n            \"Shares\": metrics[\"current_shares\"],\n            \"Investment\": metrics[\"total_investment\"],\n            \"Current Value\": metrics[\"current_value\"],\n            \"Unrealised P/L\": metrics[\"unrealised_pl\"],\n            \"Unrealised P/L %\": metrics[\"unrealised_pl_percent\"],\n            \"Day Change\": metrics[\"day_change\"],\n            \"Day Change %\": metrics[\"day_change_percent\"]\n        })\n\n    df = pd.DataFrame(data)\n    output = BytesIO()\n    with pd.ExcelWriter(output, engine='openpyxl') as writer:\n        df.to_excel(writer, index=False, sheet_name='Portfolio')\n\n    output.seek(0)\n    return send_file(\n        output,\n        as_attachment=True,\n        download_name=f'portfolio_{portfolio_id}.xlsx',\n        mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'\n    )\nfrom flask import render_template, redirect, url_for\nfrom utils.gemini import format_portfolio_for_gemini, get_gemini_recommendation\n\n@app.route('/portfolio/<int:portfolio_id>/recommendations')\ndef recommendations(portfolio_id):\n    portfolio = portfolio_manager.get_portfolio_by_id(portfolio_id)\n    symbols = portfolio_manager.get_portfolio_symbols(portfolio_id)\n\n    # Calculate updated metrics BEFORE rendering template\n    symbol_metrics = [portfolio_manager.calculate_symbol_metrics(s) for s in symbols]\n\n    portfolio_metrics = portfolio_manager.calculate_portfolio_metrics(portfolio_id)\n    portfolio_summary = {\n        'total_investment': round(portfolio_metrics['total_investment'], 2),\n        'current_value': round(portfolio_metrics['total_current_value'], 2),\n        'unrealised_pnl': round(portfolio_metrics['total_unrealised_pl'], 2),\n        'realised_pnl': round(portfolio_metrics['total_realised_pl'], 2)\n    }\n\n    # Use the calculated data for Gemini + frontend\n    formatted = format_portfolio_for_gemini(symbol_metrics)\n    gemini_response = get_gemini_recommendation(formatted)\n\n    for i, sym in enumerate(symbols):\n        sym.current_data = {\n            \"last_price\": symbol_metrics[i][\"current_price\"]\n        }\n        sym.current_shares = symbol_metrics[i][\"current_shares\"]\n        sym.current_value = symbol_metrics[i][\"current_value\"]\n\n    return render_template(\n        \"portfolio_detail.html\",\n        portfolio=portfolio,\n        symbols=symbols,\n        portfolio_summary=portfolio_summary,\n        recommendation=gemini_response\n    )\n\n@app.route('/portfolio/<int:portfolio_id>/performance-data')\ndef portfolio_performance_data(portfolio_id):\n    period = request.args.get('period', '1mo')\n    symbols = portfolio_manager.get_portfolio_symbols(portfolio_id)\n    df = get_portfolio_history(symbols, period=period)\n\n    if df.empty:\n        return {\"labels\": [], \"data\": []}\n\n    labels = df.index.strftime('%Y-%m-%d').tolist()\n    data = df['Total'].round(2).tolist()\n    return {\"labels\": labels, \"data\": data}\n\n@app.route('/portfolio/<int:portfolio_id>/delete', methods=['POST'])\ndef delete_portfolio(portfolio_id):\n    if 'user_id' not in session:\n        flash(\"⚠\uFE0F Please log in to delete a portfolio.\")\n        return redirect(url_for('login'))\n\n    # Attempt to delete the portfolio\n    result = portfolio_manager.delete_portfolio(portfolio_id, session['user_id'])\n\n    if result:\n        flash(\"✅ Portfolio deleted successfully.\")\n    else:\n        flash(\"❌ Failed to delete portfolio. It may not exist or doesn't belong to you.\")\n\n    return redirect(url_for('view_portfolios'))\n\nif __name__ == '__main__':\n    app.run(debug=True)\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app.py b/app.py
+--- a/app.py	(revision 3c1d2264e577e715326569740665e5baba504f06)
++++ b/app.py	(date 1743771140080)
+@@ -7,6 +7,8 @@
+ from dotenv import load_dotenv
+ from models.portfolio_manager import calculate_portfolio_summary
+ from models.portfolio_history import get_portfolio_history
++from utils.gemini import format_rebalance_prompt
++
+ import pandas as pd
+ import datetime
+ import os
+@@ -357,6 +359,35 @@
+         recommendation=gemini_response
+     )
+ 
++
++@app.route('/portfolio/<int:portfolio_id>/rebalance')
++def rebalance_portfolio(portfolio_id):
++    portfolio = portfolio_manager.get_portfolio_by_id(portfolio_id)
++    symbols = portfolio_manager.get_portfolio_symbols(portfolio_id)
++
++    symbol_metrics = [portfolio_manager.calculate_symbol_metrics(s) for s in symbols]
++
++    # Format for Gemini (reuse your function or write a new one)
++    prompt = format_rebalance_prompt(symbol_metrics)
++
++    # Call Gemini with rebalance prompt
++    rebalance_response = get_gemini_recommendation(prompt)
++
++    # Recalculate metrics after Gemini feedback
++    for i, sym in enumerate(symbols):
++        sym.current_data = {"last_price": symbol_metrics[i]["current_price"]}
++        sym.current_shares = symbol_metrics[i]["current_shares"]
++        sym.current_value = symbol_metrics[i]["current_value"]
++
++    return render_template(
++        "portfolio_detail.html",
++        portfolio=portfolio,
++        symbols=symbols,
++        portfolio_summary=calculate_portfolio_summary(symbols),
++        rebalance_suggestion=rebalance_response
++    )
++
++
+ @app.route('/portfolio/<int:portfolio_id>/performance-data')
+ def portfolio_performance_data(portfolio_id):
+     period = request.args.get('period', '1mo')
+Index: utils/gemini.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import os\nimport google.generativeai as genai\nfrom dotenv import load_dotenv\n\nload_dotenv()\ngenai.configure(api_key=os.getenv(\"GEMINI_API_KEY\"))\n\n# You can swap this to gemini-1.5-flash-latest for faster responses\nmodel = genai.GenerativeModel(\"models/gemini-1.5-pro-latest\")\n\n\ndef format_portfolio_for_gemini(symbol_metrics):\n    summary_lines = []\n    for m in symbol_metrics:\n        summary_lines.append(\n            f\"Ticker: {m['ticker']}, Sector: {m['sector']}, Price: ${m['current_price']}, \"\n            f\"Shares: {m['current_shares']}, Value: ${m['current_value']}\"\n        )\n    return \"\\n\".join(summary_lines)\n\n\ndef get_gemini_recommendation(formatted_portfolio_text):\n    prompt = f\"\"\"\nYou're a helpful financial assistant.\n\nHere is a portfolio:\n\n{formatted_portfolio_text}\n\nSuggest for each: Buy, Hold, or Sell, and explain briefly why — considering sector, diversification, and price performance.\nRespond in bullet points.\n\"\"\"\n    response = model.generate_content(prompt)\n    return response.text.strip()\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/utils/gemini.py b/utils/gemini.py
+--- a/utils/gemini.py	(revision 3c1d2264e577e715326569740665e5baba504f06)
++++ b/utils/gemini.py	(date 1743770965803)
+@@ -32,3 +32,15 @@
+ """
+     response = model.generate_content(prompt)
+     return response.text.strip()
++
++
++def format_rebalance_prompt(symbol_metrics):
++    lines = ["My portfolio consists of the following:"]
++    for s in symbol_metrics:
++        lines.append(
++            f"- {s['ticker']}: {s['current_shares']} shares in {s['sector']}, current value ${s['current_value']:.2f}")
++
++    lines.append("\nPlease suggest a rebalancing strategy based on risk diversification and sector exposure.")
++    lines.append("Indicate which stocks to reduce/increase and why.")
++
++    return "\n".join(lines)
+Index: templates/portfolio_detail.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{% extends 'layout.html' %}\n\n{% block title %}{{ portfolio.name }} - Portfolio Details{% endblock %}\n\n{% block content %}\n\n<div class=\"container mt-5 mb-5\">\n  <div class=\"d-flex justify-content-between align-items-center mb-4\">\n    <div>\n      <h2 class=\"fw-bold mb-0\">{{ portfolio.name }}</h2>\n    </div>\n    <div>\n      <a href=\"{{ url_for('add_symbol', portfolio_id=portfolio.portfolio_id) }}\" class=\"btn btn-success me-2\">➕ Add Symbol</a>\n      <a href=\"{{ url_for('export_portfolio_excel', portfolio_id=portfolio.portfolio_id) }}\" class=\"btn btn-outline-secondary me-2\">\uD83D\uDCE5 Export to Excel</a>\n      <a href=\"{{ url_for('recommendations', portfolio_id=portfolio.portfolio_id) }}\" class=\"btn btn-warning\">\uD83E\uDD16 Gemini Recommendations</a>\n    </div>\n  </div>\n\n  <div class=\"row mb-4\">\n    <div class=\"col-md-8\">\n      <div class=\"card h-100\">\n        <div class=\"card-body\">\n          <h5 class=\"card-title mb-3\">\uD83D\uDCC9 Portfolio Performance</h5>\n          <div class=\"d-flex flex-column flex-md-row justify-content-between align-items-center mb-3\">\n            <div class=\"d-flex justify-content-center w-100 mb-2 mb-md-0\">\n              <div class=\"btn-group\" role=\"group\">\n                <button class=\"btn btn-sm btn-outline-primary\" onclick=\"loadChart('1d')\">1D</button>\n                <button class=\"btn btn-sm btn-outline-primary\" onclick=\"loadChart('5d')\">1W</button>\n                <button class=\"btn btn-sm btn-outline-primary\" onclick=\"loadChart('1mo')\">1M</button>\n                <button class=\"btn btn-sm btn-outline-primary\" onclick=\"loadChart('ytd')\">YTD</button>\n                <button class=\"btn btn-sm btn-outline-primary\" onclick=\"loadChart('1y')\">1Y</button>\n                <button class=\"btn btn-sm btn-outline-primary\" onclick=\"loadChart('max')\">Max</button>\n              </div>\n            </div>\n            <div class=\"d-flex align-items-center\">\n              <label class=\"form-check-label me-2\">Show %</label>\n              <input type=\"checkbox\" class=\"form-check-input\" id=\"showPercentage\" />\n            </div>\n          </div>\n          <canvas id=\"portfolioChart\" height=\"200\"></canvas>\n        </div>\n      </div>\n    </div>\n\n    <div class=\"col-md-4\">\n      <div class=\"d-flex flex-column justify-content-between h-100\">\n        <div class=\"card mb-3\">\n          <div class=\"card-body\">\n            <h5 class=\"card-title\">\uD83C\uDFDB\uFE0F Sector Allocation</h5>\n            <canvas id=\"sectorChart\" height=\"180\"></canvas>\n          </div>\n        </div>\n        <div class=\"card\">\n          <div class=\"card-body\">\n            <h5>\uD83D\uDCCA Portfolio Summary</h5>\n            <p><strong>Total Investment:</strong> ${{ \"%.2f\"|format(portfolio_summary.total_investment|float) }}</p>\n            <p><strong>Current Value:</strong> ${{ \"%.2f\"|format(portfolio_summary.current_value|float) }}</p>\n            <p>\n              <strong>Unrealised P&amp;L:</strong>\n              <span class=\"{% if portfolio_summary.unrealised_pnl >= 0 %}text-success{% else %}text-danger{% endif %}\">\n                {% if portfolio_summary.unrealised_pnl < 0 %}-${{ \"%.2f\"|format(portfolio_summary.unrealised_pnl|abs) }}{% else %}${{ \"%.2f\"|format(portfolio_summary.unrealised_pnl) }}{% endif %}\n              </span>\n            </p>\n            <p>\n              <strong>Realised P&amp;L:</strong>\n              <span class=\"{% if portfolio_summary.realised_pnl >= 0 %}text-success{% else %}text-danger{% endif %}\">\n                {% if portfolio_summary.realised_pnl < 0 %}-${{ \"%.2f\"|format(portfolio_summary.realised_pnl|abs) }}{% else %}${{ \"%.2f\"|format(portfolio_summary.realised_pnl) }}{% endif %}\n              </span>\n            </p>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n\n  {% if symbols %}\n  <div class=\"card mb-4\">\n    <div class=\"card-body\">\n      <h5 class=\"card-title\">\uD83D\uDCBC Holdings</h5>\n      <table class=\"table table-striped mt-3\">\n        <thead class=\"table-dark\">\n          <tr>\n            <th>Ticker</th>\n            <th>Sector</th>\n            <th>Current Price</th>\n            <th>Shares</th>\n            <th>Current Value</th>\n            <th>Actions</th>\n            <th></th>\n          </tr>\n        </thead>\n        <tbody>\n          {% for s in symbols %}\n          <tr>\n            <td>{{ s.ticker }}</td>\n            <td>{{ s.sector }}</td>\n            <td>${{ \"%.2f\"|format(s.current_data.last_price|float) }}</td>\n            <td>{{ s.current_shares }}</td>\n            <td>${{ \"%.2f\"|format(s.current_value|float) }}</td>\n            <td>\n              <a href=\"{{ url_for('add_transaction', portfolio_id=portfolio.portfolio_id, symbol_id=s.symbol_id) }}\" class=\"btn btn-sm btn-outline-primary\">Add Txn</a>\n            </td>\n            <td class=\"text-center\">\n              {% if s.transactions %}\n              <span class=\"toggle-transactions\" data-target=\"transactions-{{ s.symbol_id }}\" style=\"cursor: pointer;\">\n                <span class=\"toggle-icon\">&#9660;</span>\n              </span>\n              {% endif %}\n            </td>\n          </tr>\n          {% if s.transactions %}\n          <tr id=\"transactions-{{ s.symbol_id }}\" class=\"transaction-details\" style=\"display: none;\">\n            <td colspan=\"7\">\n              <table class=\"table table-bordered mt-2 mb-0\">\n                <thead class=\"table-light\">\n                  <tr>\n                    <th>Date</th>\n                    <th>Type</th>\n                    <th>Shares</th>\n                    <th>Price</th>\n                    <th>Cost</th>\n                  </tr>\n                </thead>\n                <tbody>\n                  {% set summary = namespace(total_cost=0, total_buy=0, total_sell=0) %}\n                  {% for txn in s.transactions %}\n                  <tr>\n                    <td>{{ txn.transaction_date }}</td>\n                    <td>{{ txn.transaction_type }}</td>\n                    <td>{{ txn.shares }}</td>\n                    <td>${{ \"%.2f\"|format(txn.price|float) }}</td>\n                    <td>${{ \"%.2f\"|format(txn.transaction_cost|float) }}</td>\n                  </tr>\n                  {% if txn.transaction_type.lower() == 'buy' %}\n                  {% set summary.total_cost = summary.total_cost + ((txn.shares | float) * (txn.price | float)) + (txn.transaction_cost | float) %}\n                  {% set summary.total_buy = summary.total_buy + (txn.shares | float) %}\n                  {% elif txn.transaction_type.lower() == 'sell' %}\n                  {% set summary.total_sell = summary.total_sell + (txn.shares | float) %}\n                  {% endif %}\n                  {% endfor %}\n                </tbody>\n                <tfoot class=\"table-secondary\">\n                  <tr>\n                    <td colspan=\"5\">\n                      <strong>Summary:</strong>\n                      Bought: {{ summary.total_buy }} shares,\n                      Sold: {{ summary.total_sell }} shares,\n                      Avg Cost/Share:\n                      {% if summary.total_buy > 0 %}${{ \"%.2f\"|format((summary.total_cost / summary.total_buy)|float) }}{% else %}-{% endif %},\n                      Total Cost: ${{ \"%.2f\"|format(summary.total_cost|float) }}\n                    </td>\n                  </tr>\n                </tfoot>\n              </table>\n            </td>\n          </tr>\n          {% endif %}\n          {% endfor %}\n        </tbody>\n      </table>\n    </div>\n  </div>\n  {% endif %}\n\n  {% if recommendation %}\n  <div class=\"card mt-4\">\n    <div class=\"card-body\">\n      <h5>\uD83E\uDD16 Gemini AI Recommendations</h5>\n      <div class=\"alert alert-secondary\" style=\"white-space: pre-wrap;\">\n        {{ recommendation }}\n      </div>\n    </div>\n  </div>\n  {% endif %}\n</div>\n\n<script src=\"https://cdn.jsdelivr.net/npm/chart.js\"></script>\n<script>\n  let chartInstance;\n  function loadChart(period) {\n    fetch(`/portfolio/{{ portfolio.portfolio_id }}/performance-data?period=${period}`)\n      .then(response => response.json())\n      .then(data => {\n        const ctx = document.getElementById('portfolioChart').getContext('2d');\n        if (chartInstance) chartInstance.destroy();\n\n        const showPercentage = document.getElementById(\"showPercentage\").checked;\n        const dataset = {\n          label: showPercentage ? 'Portfolio Change (%)' : 'Portfolio Value ($)',\n          data: showPercentage ? data.percentage_data : data.data,\n          borderColor: 'rgba(75, 192, 192, 1)',\n          fill: false,\n          tension: 0.1\n        };\n\n        chartInstance = new Chart(ctx, {\n          type: 'line',\n          data: { labels: data.labels, datasets: [dataset] },\n          options: {\n            responsive: true,\n            scales: {\n              x: { title: { display: true, text: 'Date' } },\n              y: { title: { display: true, text: showPercentage ? 'Change (%)' : 'Value ($)' } }\n            },\n            plugins: {\n              tooltip: {\n                callbacks: {\n                  label: function(context) {\n                    const label = context.dataset.label || '';\n                    const value = context.parsed.y;\n                    return `${label}: ${showPercentage ? value.toFixed(2) + '%' : '$' + value.toFixed(2)}`;\n                  }\n                }\n              }\n            }\n          }\n        });\n      });\n  }\n  document.addEventListener(\"DOMContentLoaded\", () => loadChart(\"1mo\"));\n</script>\n\n<script>\n  function loadSectorChart() {\n    fetch(`/portfolio/{{ portfolio.portfolio_id }}/sector-data`)\n      .then(response => response.json())\n      .then(data => {\n        const ctx = document.getElementById('sectorChart').getContext('2d');\n        new Chart(ctx, {\n          type: 'pie',\n          data: {\n            labels: data.labels,\n            datasets: [{\n              label: 'Sector Allocation (%)',\n              data: data.values,\n              backgroundColor: [\n                '#4e73df', '#1cc88a', '#36b9cc', '#f6c23e',\n                '#e74a3b', '#858796', '#fd7e14', '#20c997'\n              ]\n            }]\n          },\n          options: {\n            responsive: true,\n            plugins: {\n              legend: { position: 'right' },\n              tooltip: {\n                callbacks: {\n                  label: function(context) {\n                    const label = context.label || '';\n                    const value = context.parsed;\n                    return `${label}: ${value.toFixed(2)}%`;\n                  }\n                }\n              }\n            }\n          }\n        });\n      });\n  }\n\n  document.addEventListener(\"DOMContentLoaded\", () => loadSectorChart());\n</script>\n\n<script>\n  document.addEventListener('DOMContentLoaded', function () {\n    const toggles = document.querySelectorAll('.toggle-transactions');\n    toggles.forEach(toggle => {\n      toggle.addEventListener('click', () => {\n        const targetId = toggle.dataset.target;\n        const target = document.getElementById(targetId);\n        const icon = toggle.querySelector('.toggle-icon');\n        if (target.style.display === 'none') {\n          target.style.display = 'table-row';\n          icon.innerHTML = '&#x25B2;';\n        } else {\n          target.style.display = 'none';\n          icon.innerHTML = '&#9660;';\n        }\n      });\n    });\n  });\n</script>\n{% endblock %}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/templates/portfolio_detail.html b/templates/portfolio_detail.html
+--- a/templates/portfolio_detail.html	(revision 3c1d2264e577e715326569740665e5baba504f06)
++++ b/templates/portfolio_detail.html	(date 1743771523723)
+@@ -13,6 +13,7 @@
+       <a href="{{ url_for('add_symbol', portfolio_id=portfolio.portfolio_id) }}" class="btn btn-success me-2">➕ Add Symbol</a>
+       <a href="{{ url_for('export_portfolio_excel', portfolio_id=portfolio.portfolio_id) }}" class="btn btn-outline-secondary me-2">📥 Export to Excel</a>
+       <a href="{{ url_for('recommendations', portfolio_id=portfolio.portfolio_id) }}" class="btn btn-warning">🤖 Gemini Recommendations</a>
++      <a href="{{ url_for('rebalance_portfolio', portfolio_id=portfolio.portfolio_id) }}" class="btn btn-primary me-2"> 🧮 Rebalance Portfolio </a>
+     </div>
+   </div>
+ 
+@@ -53,18 +54,18 @@
+         <div class="card">
+           <div class="card-body">
+             <h5>📊 Portfolio Summary</h5>
+-            <p><strong>Total Investment:</strong> ${{ "%.2f"|format(portfolio_summary.total_investment|float) }}</p>
+-            <p><strong>Current Value:</strong> ${{ "%.2f"|format(portfolio_summary.current_value|float) }}</p>
++            <p><strong>Total Investment:</strong> ${{ "%.2f"|format(portfolio_summary['total_investment']|float) }}</p>
++            <p><strong>Current Value:</strong> ${{ "%.2f"|format(portfolio_summary['current_value']|float) }}</p>
+             <p>
+               <strong>Unrealised P&amp;L:</strong>
+-              <span class="{% if portfolio_summary.unrealised_pnl >= 0 %}text-success{% else %}text-danger{% endif %}">
+-                {% if portfolio_summary.unrealised_pnl < 0 %}-${{ "%.2f"|format(portfolio_summary.unrealised_pnl|abs) }}{% else %}${{ "%.2f"|format(portfolio_summary.unrealised_pnl) }}{% endif %}
++              <span class="{% if portfolio_summary['unrealised_pnl'] >= 0 %}text-success{% else %}text-danger{% endif %}">
++              {% if portfolio_summary['unrealised_pnl'] < 0 %}-${{ "%.2f"|format(portfolio_summary.unrealised_pnl|abs) }}{% else %}${{ "%.2f"|format(portfolio_summary.unrealised_pnl) }}{% endif %}
+               </span>
+             </p>
+             <p>
+               <strong>Realised P&amp;L:</strong>
+-              <span class="{% if portfolio_summary.realised_pnl >= 0 %}text-success{% else %}text-danger{% endif %}">
+-                {% if portfolio_summary.realised_pnl < 0 %}-${{ "%.2f"|format(portfolio_summary.realised_pnl|abs) }}{% else %}${{ "%.2f"|format(portfolio_summary.realised_pnl) }}{% endif %}
++              <span class="{% if portfolio_summary['realised_pnl'] >= 0 %}text-success{% else %}text-danger{% endif %}">
++              {% if portfolio_summary['realised_pnl'] < 0 %}-${{ "%.2f"|format(portfolio_summary.realised_pnl|abs) }}{% else %}${{ "%.2f"|format(portfolio_summary.realised_pnl) }}{% endif %}
+               </span>
+             </p>
+           </div>
+@@ -173,6 +174,18 @@
+   </div>
+   {% endif %}
+ </div>
++
++  {% if rebalance_suggestion %}
++<div class="card mt-4">
++  <div class="card-body">
++    <h5>🧮 AI Rebalance Suggestion</h5>
++    <div class="alert alert-info" style="white-space: pre-wrap;">
++      {{ rebalance_suggestion }}
++    </div>
++  </div>
++</div>
++{% endif %}
++
+ 
+ <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+ <script>
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"Black\">\n    <option name=\"sdkName\" value=\"investibuddy_web\" />\n  </component>\n  <component name=\"ProjectRootManager\" version=\"2\" project-jdk-name=\"investibuddy_web\" project-jdk-type=\"Python SDK\" />\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	(revision 3c1d2264e577e715326569740665e5baba504f06)
++++ b/.idea/misc.xml	(date 1743767574066)
+@@ -3,5 +3,5 @@
+   <component name="Black">
+     <option name="sdkName" value="investibuddy_web" />
+   </component>
+-  <component name="ProjectRootManager" version="2" project-jdk-name="investibuddy_web" project-jdk-type="Python SDK" />
++  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.9 (investibuddy_web)" project-jdk-type="Python SDK" />
+ </project>
+\ No newline at end of file
+Index: .idea/investibuddy_web.iml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<module type=\"PYTHON_MODULE\" version=\"4\">\n  <component name=\"Flask\">\n    <option name=\"enabled\" value=\"true\" />\n  </component>\n  <component name=\"NewModuleRootManager\">\n    <content url=\"file://$MODULE_DIR$\">\n      <excludeFolder url=\"file://$MODULE_DIR$/.venv\" />\n    </content>\n    <orderEntry type=\"jdk\" jdkName=\"investibuddy_web\" jdkType=\"Python SDK\" />\n    <orderEntry type=\"sourceFolder\" forTests=\"false\" />\n  </component>\n  <component name=\"TemplatesService\">\n    <option name=\"TEMPLATE_CONFIGURATION\" value=\"Jinja2\" />\n    <option name=\"TEMPLATE_FOLDERS\">\n      <list>\n        <option value=\"$MODULE_DIR$/templates\" />\n      </list>\n    </option>\n  </component>\n</module>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/investibuddy_web.iml b/.idea/investibuddy_web.iml
+--- a/.idea/investibuddy_web.iml	(revision 3c1d2264e577e715326569740665e5baba504f06)
++++ b/.idea/investibuddy_web.iml	(date 1743767574058)
+@@ -7,7 +7,7 @@
+     <content url="file://$MODULE_DIR$">
+       <excludeFolder url="file://$MODULE_DIR$/.venv" />
+     </content>
+-    <orderEntry type="jdk" jdkName="investibuddy_web" jdkType="Python SDK" />
++    <orderEntry type="jdk" jdkName="Python 3.9 (investibuddy_web)" jdkType="Python SDK" />
+     <orderEntry type="sourceFolder" forTests="false" />
+   </component>
+   <component name="TemplatesService">
