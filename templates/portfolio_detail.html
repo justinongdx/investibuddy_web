@@ -199,7 +199,6 @@
   </div>
 </form>
 
-<!-- Display Summary Cards for Each Ticker -->
 <div id="sentimentSection">
 {% for ticker, articles in filtered_news.items() %}
   <div class="card mb-4">
@@ -260,28 +259,24 @@
 {% endfor %}
 </div>
 
-
+<!-- To create portfolio line charts over time (connect to chart.js) -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 let chartInstance;
-
 function loadChart(period, btn = null) {
   document.querySelectorAll('.period-btn').forEach(button => {
     button.classList.remove('btn-primary');
     button.classList.add('btn-outline-primary');
   });
-
   if (btn) {
     btn.classList.remove('btn-outline-primary');
     btn.classList.add('btn-primary');
   }
-
   fetch(`/portfolio/{{ portfolio.portfolio_id }}/performance-data?period=${period}`)
     .then(response => response.json())
     .then(data => {
       const ctx = document.getElementById('portfolioChart').getContext('2d');
       if (chartInstance) chartInstance.destroy();
-
       const dataset = {
         label: 'Portfolio Value ($)',
         data: data.data,
@@ -289,7 +284,6 @@ function loadChart(period, btn = null) {
         fill: false,
         tension: 0.1
       };
-
       chartInstance = new Chart(ctx, {
         type: 'line',
         data: { labels: data.labels, datasets: [dataset] },
@@ -303,30 +297,26 @@ function loadChart(period, btn = null) {
       });
     });
 }
-
 document.addEventListener("DOMContentLoaded", () => {
   const defaultBtn = document.querySelector('.period-btn[onclick*="1mo"]');
   loadChart("1mo", defaultBtn);
 });
-
 </script>
 
-
+<!-- To create sector pie chart (connect to chart.js) -->
 <script>
-
 function loadSectorChart() {
   fetch(`/portfolio/{{ portfolio.portfolio_id }}/sector-data`)
     .then(response => response.json())
     .then(data => {
       const ctx = document.getElementById('sectorChart').getContext('2d');
-
       new Chart(ctx, {
         type: 'pie',
         data: {
           labels: data.labels,
           datasets: [{
             label: 'Sector Allocation',
-            data: data.dollars, // use actual dollar values in chart
+            data: data.dollars,
             backgroundColor: [
               '#4e73df', '#1cc88a', '#36b9cc', '#f6c23e',
               '#e74a3b', '#858796', '#fd7e14', '#20c997'

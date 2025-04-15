@@ -5,12 +5,12 @@ import base64
 import os
 import matplotlib
 
-matplotlib.use('Agg')  # ✅ Use non-GUI backend for server-safe plotting
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud
 import nltk
 
-nltk.download('vader_lexicon')  # ✅ Download VADER lexicon if not already present
+nltk.download('vader_lexicon')
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from collections import Counter
 from newspaper import Article
@@ -23,7 +23,6 @@ class SentimentService:
         self.vader = SentimentIntensityAnalyzer()
 
     def fetch_news_headlines(self, ticker: str, max_articles=3) -> list:
-        """Fetch latest news articles for the ticker."""
         params = {
             "q": ticker,
             "apiKey": self.api_key,
@@ -58,11 +57,9 @@ class SentimentService:
             return ""
 
     def analyze_sentiment(self, text: str) -> dict:
-        """Use VADER to analyze sentiment score of text."""
         return self.vader.polarity_scores(text)
 
     def classify_message_type(self, text: str) -> str:
-        """Classify message as Emotional or Informative based on VADER scores."""
         scores = self.vader.polarity_scores(text)
         if max(scores['pos'], scores['neg']) >= 0.4:
             return "Emotional"
@@ -100,7 +97,6 @@ class SentimentService:
         return data
 
     def get_sentiment_distribution(self, articles: list) -> str:
-        """Generate a histogram of message types and return it as a base64-encoded image."""
         emotional = sum(1 for a in articles if a["message_type"] == "Emotional")
         informative = sum(1 for a in articles if a["message_type"] == "Informative")
 
@@ -121,7 +117,6 @@ class SentimentService:
         return encoded_image
 
     def generate_wordcloud(self, articles: list, ticker: str) -> None:
-        """Generate and save a word cloud image for the given ticker."""
         text = " ".join((a["title"] or "") + " " + (a["description"] or "") for a in articles)
         wordcloud = WordCloud(width=800, height=400, background_color='white', max_words=100).generate(text)
 
@@ -136,7 +131,6 @@ class SentimentService:
         plt.close()
 
     def get_banner_score(self, scores: list) -> str:
-        """Classify overall market sentiment into Bullish / Neutral / Bearish."""
         avg = sum([s["compound"] for s in scores]) / len(scores) if scores else 0
         if avg >= 0.2:
             return "📈 Bullish"
@@ -146,7 +140,6 @@ class SentimentService:
             return "😐 Neutral"
 
     def fetch_financial_ratios(self, ticker: str) -> dict:
-        """Use yfinance to get PE ratios and other key financials."""
         try:
             stock = yf.Ticker(ticker)
             info = stock.info
