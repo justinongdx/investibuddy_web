@@ -21,7 +21,7 @@ db_manager = DatabaseManager()
 user_manager = UserManager(db_manager)
 portfolio_manager = PortfolioManager(db_manager)
 
-# Initialize the sentiment service globally
+# Initialise the sentiment service globally using unique API retrieved from NewsAPI website
 news_api_key = "5d2d00dd80f34ef1ad10d55df87d49d0"
 sentiment_service = SentimentService(api_key=news_api_key)
 @app.route('/')
@@ -187,7 +187,7 @@ def portfolio_detail(portfolio_id):
     }
     # Get filters
     search_query = request.args.get('search', '').upper()
-    sentiment_filter = request.args.get('sentiment')  # 'positive', 'neutral', or 'negative'
+    sentiment_filter = request.args.get('sentiment')  # positive, neutral, or negative
 
     symbols = portfolio_manager.get_portfolio_symbols(portfolio_id)
     tickers = [s.ticker for s in symbols]
@@ -203,7 +203,7 @@ def portfolio_detail(portfolio_id):
         ticker = s.ticker
         articles = sentiment_service.enrich_articles(sentiment_service.fetch_news_headlines(ticker, 15))
 
-        # Apply sentiment filter (only retain matching articles)
+        # Apply sentiment filter to get articles with the associated sentiment
         if sentiment_filter:
             if sentiment_filter == 'positive':
                 articles = [a for a in articles if a['sentiment']['compound'] >= 0.2]
@@ -215,7 +215,7 @@ def portfolio_detail(portfolio_id):
         # Limit to top 3 articles per stock
         top_articles = articles[:3]
 
-        # Only show stock if it has matching articles + matches search (if search applied)
+        # Only show stock if it has matching articles + matches search if we applied the search
         if top_articles:
             if not search_query or search_query in ticker.upper():
                 filtered_symbols.append(s)
@@ -226,7 +226,6 @@ def portfolio_detail(portfolio_id):
                 sentiment_service.generate_wordcloud(top_articles, ticker)
                 wordclouds[ticker] = f"wordcloud_{ticker}.png"
 
-    # Portfolio Calculations
     total_market_value = 0
     total_cost_all = 0
     for s in symbols:
@@ -283,19 +282,19 @@ def symbol_sentiment(portfolio_id, ticker):
         flash("⚠️ Please log in.")
         return redirect(url_for('login'))
 
-    # Get articles and enrich with sentiment/message type
+    # Get articles and enrich it with sentiment/message type
     articles = sentiment_service.fetch_news_headlines(ticker, max_articles=15)
     articles = sentiment_service.enrich_articles(articles)
 
-    # Generate wordcloud + histogram
+    # This is to generate wordcloud + histogram
     sentiment_service.generate_wordcloud(articles, ticker)
     histogram_image = sentiment_service.get_sentiment_distribution(articles)
 
-    # Financial fundamentals + company overview
+    # Financial fundamentals and company overview
     financials = sentiment_service.fetch_financial_ratios(ticker)
     about_text = sentiment_service.get_company_overview(ticker)
 
-    # Compute sentiment breakdown for pie chart
+    # To compute sentiment breakdown for pie chart
     sentiment_scores = [a['sentiment'] for a in articles]
     sentiment = {
         'positive': round(sum(1 for s in sentiment_scores if s['compound'] >= 0.2) / len(sentiment_scores), 2),
@@ -307,7 +306,7 @@ def symbol_sentiment(portfolio_id, ticker):
         'symbol_sentiment.html',
         portfolio_id=portfolio_id,
         ticker=ticker,
-        headlines=articles[:3],  # Top 3 for carousel
+        headlines=articles[:3],
         histogram_image=histogram_image,
         sentiment=sentiment,
         financials=financials,
@@ -440,9 +439,6 @@ def recommendations(portfolio_id):
         sym.current_shares = symbol_metrics[i]["current_shares"]
         sym.current_value = symbol_metrics[i]["current_value"]
 
-    # -----------------------------
-    # ✨ Add sentiment enrichment
-    # -----------------------------
     wordclouds = {}
     news_data = {}
     sentiment_histograms = {}
