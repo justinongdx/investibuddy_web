@@ -108,8 +108,16 @@ def forgot_password():
             # Save the token in the database
             user_manager.save_reset_token(email, token, expiration)
 
+            # Create the reset link with proper domain
+            # For development, use the current request's host
+            if request.host.startswith('127.0.0.1') or request.host.startswith('localhost'):
+                base_url = request.url_root.rstrip('/')
+                reset_link = f"{base_url}/reset-password/{token}"
+            else:
+                # Use url_for for production
+                reset_link = url_for('reset_password', token=token, _external=True)
+
             # Send password reset email
-            reset_link = url_for('reset_password', token=token, _external=True)
             user_manager.send_password_reset_email(email, reset_link)
 
             flash('✅ Password reset instructions have been sent to your email.')

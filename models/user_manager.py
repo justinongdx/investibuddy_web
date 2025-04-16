@@ -230,8 +230,14 @@ class UserManager:
         """Send password reset email with link"""
         try:
             # Get email credentials from environment variables
-            sender_email = os.environ.get('EMAIL_USER', 'your_email@example.com')
-            sender_password = os.environ.get('EMAIL_PASSWORD', 'your_email_password')
+            sender_email = os.environ.get('EMAIL_USER')
+            sender_password = os.environ.get('EMAIL_PASSWORD')
+
+            # Check if email credentials are set
+            if not sender_email or not sender_password:
+                print("Warning: EMAIL_USER or EMAIL_PASSWORD environment variables not set!")
+                print(f"Would send reset link to {email}: {reset_link}")
+                return False
 
             # Create message
             msg = MIMEMultipart()
@@ -257,6 +263,10 @@ class UserManager:
             """
 
             msg.attach(MIMEText(body, 'plain'))
+
+            # Print details for debugging
+            print(f"Sending password reset email to: {email}")
+            print(f"Reset link: {reset_link}")
 
             # Send email
             server = smtplib.SMTP('smtp.gmail.com', 587)
