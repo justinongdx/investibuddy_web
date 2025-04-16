@@ -3,5 +3,5 @@
   <component name="Black">
     <option name="sdkName" value="investibuddy_web" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.9 (investibuddy_web)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="investibuddy_web" project-jdk-type="Python SDK" />
 </project>
