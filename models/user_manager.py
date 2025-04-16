@@ -7,6 +7,7 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import os
+from datetime import datetime
 
 
 class UserManager:
@@ -159,3 +160,122 @@ class UserManager:
         self.db_manager.execute_action(
             "UPDATE users SET risk_tolerance = ? WHERE user_id = ?",
             (new_risk, user_id))
+
+    def get_user_by_email(self, email: str):
+        """Get user by email address"""
+        result = self.db_manager.execute_query(
+            "SELECT user_id, username, email FROM users WHERE email = ?",
+            (email,))
+
+        return result[0] if result else None
+
+    def save_reset_token(self, email: str, token: str, expiration: datetime) -> bool:
+        """Save password reset token in the database"""
+        try:
+            # First, check if a token already exists for this user and delete it
+            self.db_manager.execute_action(
+                "DELETE FROM password_reset_tokens WHERE email = ?",
+                (email,))
+
+            # Insert the new token
+            self.db_manager.execute_action(
+                "INSERT INTO password_reset_tokens (email, token, expiration) VALUES (?, ?, ?)",
+                (email, token, expiration.strftime('%Y-%m-%d %H:%M:%S')))
+
+            return True
+        except Exception as e:
+            print(f"Error saving reset token: {e}")
+            return False
+
+    def verify_reset_token(self, token: str) -> Optional[str]:
+        """Verify that a reset token is valid and not expired"""
+        result = self.db_manager.execute_query(
+            "SELECT email, expiration FROM password_reset_tokens WHERE token = ?",
+            (token,))
+
+        if not result:
+            return None
+
+        email, expiration_str = result[0]
+        expiration = datetime.strptime(expiration_str, '%Y-%m-%d %H:%M:%S')
+
+        # Check if token is expired
+        if datetime.now() > expiration:
+            # Delete expired token
+            self.db_manager.execute_action(
+                "DELETE FROM password_reset_tokens WHERE token = ?",
+                (token,))
+            return None
+
+        return email
+
+    def update_password(self, email: str, new_password: str) -> bool:
+        """Update user password"""
+        try:
+            self.db_manager.execute_action(
+                "UPDATE users SET password = ? WHERE email = ?",
+                (new_password, email))
+
+            # Remove the reset token after successful password update
+            self.db_manager.execute_action(
+                "DELETE FROM password_reset_tokens WHERE email = ?",
+                (email,))
+
+            return True
+        except Exception as e:
+            print(f"Error updating password: {e}")
+            return False
+
+    def send_password_reset_email(self, email: str, reset_link: str) -> bool:
+        """Send password reset email with link"""
+        try:
+            # Get email credentials from environment variables
+            sender_email = os.environ.get('EMAIL_USER')
+            sender_password = os.environ.get('EMAIL_PASSWORD')
+
+            # Check if email credentials are set
+            if not sender_email or not sender_password:
+                print("Warning: EMAIL_USER or EMAIL_PASSWORD environment variables not set!")
+                print(f"Would send reset link to {email}: {reset_link}")
+                return False
+
+            # Create message
+            msg = MIMEMultipart()
+            msg['From'] = sender_email
+            msg['To'] = email
+            msg['Subject'] = "InvestiBuddy - Password Reset Request"
+
+            # Email body
+            body = f"""
+            Hello,
+
+            You recently requested to reset your password for your InvestiBuddy account.
+            Click the link below to reset your password:
+
+            {reset_link}
+
+            This link will expire in 1 hour.
+
+            If you did not request a password reset, please ignore this email or contact support if you have concerns.
+
+            Thank you,
+            The InvestiBuddy Team
+            """
+
+            msg.attach(MIMEText(body, 'plain'))
+
+            # Print details for debugging
+            print(f"Sending password reset email to: {email}")
+            print(f"Reset link: {reset_link}")
+
+            # Send email
+            server = smtplib.SMTP('smtp.gmail.com', 587)
+            server.starttls()
+            server.login(sender_email, sender_password)
+            server.send_message(msg)
+            server.quit()
+
+            return True
+        except Exception as e:
+            print(f"Error sending password reset email: {e}")
+            return False

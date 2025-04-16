@@ -53,6 +53,17 @@ def create_database():
     )
     """)
 
+    # Create the password_reset_tokens table
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS password_reset_tokens (
+        token_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        email TEXT NOT NULL,
+        token TEXT UNIQUE NOT NULL,
+        expiration TEXT NOT NULL,
+        FOREIGN KEY (email) REFERENCES users (email)
+    )
+    """)
+
     # Create the portfolios table if it doesn't exist
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS portfolios (
