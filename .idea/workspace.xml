@@ -5,25 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e1a8e9de-b7af-4b2f-b553-27f796069872" name="Changes" comment="clean up">
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_1_4_2025_5_04_pm_[Changes]/shelved.patch" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_1_4_2025_5_04_pm__Changes_.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_1_4_2025_5_09_pm_[Changes]/shelved.patch" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_1_4_2025_5_09_pm__Changes_.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_4_25,_7_51 pm_[Changes]/shelved.patch" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_4_25__7_51pm__Changes_.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_1_4_2025_5_29_pm_[Changes]/shelved.patch" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_1_4_2025_5_29_pm__Changes_.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_1_4_2025_5_34_pm_[Changes]/shelved.patch" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_1_4_2025_5_34_pm__Changes_.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_4_25,_11_53 pm_[Changes]/shelved.patch" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_4_25__11_53pm__Changes_.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_5_4_2025_2_22_pm_[Changes]/shelved.patch" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_5_4_2025_2_22_pm__Changes_.xml" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/models/database_updates.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/forgot_password.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/reset_password.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/investibuddy_web.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/investibuddy_web.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/portfolio_history.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/portfolio_history.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/sentiment_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/sentiment_service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/portfolio_detail.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/portfolio_detail.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/user_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/user_manager.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/portfolio_manager.db" beforeDir="false" afterPath="$PROJECT_DIR$/portfolio_manager.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/login_update.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -64,12 +55,12 @@
     &quot;assignee&quot;: &quot;anthonykhj&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/lisalim14/investibuddy_web.git&quot;,
-    &quot;accountId&quot;: &quot;886b3fa5-21ae-41e0-922b-e4d773e9b0ba&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/dhl1885/investibuddy_web.git",
+    "accountId": "a473b36e-5a38-4f90-8b9a-f36a9aa68b52"
   }
-}</component>
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 0
 }</component>
@@ -115,7 +106,6 @@
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <option name="SDK_HOME" value="" />
-      <option name="SDK_NAME" value="Python 3.12 (invest)" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
@@ -128,8 +118,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-deb605915726-JavaScript-PY-243.22562.220" />
-        <option value="bundled-python-sdk-0fc6c617c4bd-9a18a617cbe4-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-243.22562.220" />
+        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-PY-243.26053.29" />
+        <option value="bundled-python-sdk-b1dbf8ef85a6-4df51de95216-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-243.26053.29" />
       </set>
     </attachedChunks>
   </component>
@@ -155,6 +145,7 @@
       <workItem from="1743987864192" duration="732000" />
       <workItem from="1744097370428" duration="600000" />
       <workItem from="1744717960860" duration="1148000" />
+      <workItem from="1744816178356" duration="400000" />
     </task>
     <task id="LOCAL-00001" summary="added an arrow to show/hide transactions under each ticker.">
       <option name="closed" value="true" />

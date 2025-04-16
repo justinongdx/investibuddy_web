@@ -10,6 +10,8 @@ from models.portfolio_history import get_portfolio_history
 from models.sentiment_service import SentimentService
 import pandas as pd
 import datetime
+import secrets
+from datetime import datetime, timedelta
 import os
 
 app = Flask(__name__)
@@ -87,8 +89,69 @@ def login():
         else:
             flash('❌ Invalid email or password, or account not verified.')
 
-    return render_template('login.html')
+    return render_template('login_update.html')
 
+
+@app.route('/forgot-password', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        email = request.form['email']
+
+        # Check if email exists in the database
+        user = user_manager.get_user_by_email(email)
+
+        if user:
+            # Generate a secure token and store it with an expiration time
+            token = secrets.token_urlsafe(32)
+            expiration = datetime.now() + timedelta(hours=1)
+
+            # Save the token in the database
+            user_manager.save_reset_token(email, token, expiration)
+
+            # Send password reset email
+            reset_link = url_for('reset_password', token=token, _external=True)
+            user_manager.send_password_reset_email(email, reset_link)
+
+            flash('✅ Password reset instructions have been sent to your email.')
+            return redirect(url_for('login'))
+        else:
+            flash('❌ No account found with that email address.')
+
+    return render_template('forgot_password.html')
+
+@app.route('/reset-password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    # Verify token and check if it's still valid
+    user_email = user_manager.verify_reset_token(token)
+
+    if not user_email:
+        flash('❌ Invalid or expired password reset link. Please try again.')
+        return redirect(url_for('forgot_password'))
+
+    if request.method == 'POST':
+        password = request.form['password']
+        confirm_password = request.form['confirm_password']
+
+        if password != confirm_password:
+            flash('❌ Passwords do not match.')
+            return render_template('reset_password.html', token=token)
+
+        # Check password strength
+        is_strong, message = user_manager.is_strong_password(password)
+        if not is_strong:
+            flash(f'❌ {message}')
+            return render_template('reset_password.html', token=token)
+
+        # Update the user's password
+        success = user_manager.update_password(user_email, password)
+
+        if success:
+            flash('✅ Your password has been updated! You can now log in with your new password.')
+            return redirect(url_for('login'))
+        else:
+            flash('❌ An error occurred. Please try again.')
+
+    return render_template('reset_password.html', token=token)
 
 @app.route('/logout')
 def logout():
